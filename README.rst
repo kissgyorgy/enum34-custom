@@ -32,6 +32,7 @@ Usage
 >>> Suit('c') is Suit('C') is Suit('♣') is Suit.CLUBS
 True
 
+>>> import pickle
 >>> pickle.loads(pickle.dumps(Suit('c'))) is Suit('♣')
 True
 
