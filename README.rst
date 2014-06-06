@@ -6,6 +6,11 @@ What
 
 Custom Enum classes for the Python 3 enum module.
 
+Requirements
+------------
+
+* Python 3.4+
+
 Usage
 -----
 
