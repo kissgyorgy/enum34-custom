@@ -4,15 +4,27 @@ enum34-custom
 What
 ----
 
-Custom Enum classes for the Python 3 enum module.
+Custom Enum classes for the Python 3.4 enum module.
+
 
 Requirements
 ------------
 
 * Python 3.4+
 
+Install
+-------
+
+.. code-block:: bash
+
+   $ pip install enum34-custom
+
+
 Usage
 -----
+
+MultiValueEnum
+^^^^^^^^^^^^^^
 
 .. code-block:: python
 
@@ -26,7 +38,7 @@ Usage
 
 
 >>> print(Suit.CLUBS)
-♣
+Suit.CLUBS
 
 >>> Suit.CLUBS
 <Suit.CLUBS: ('♣', 'c', 'C')>
@@ -52,14 +64,37 @@ Traceback (most recent call last):
     raise ValueError("%s is not a valid %s" % (value, cls.__name__))
 ValueError: L is not a valid Suit
 
+>>> list(Suit)
+[<Suit.CLUBS: ('♣', 'c', 'C')>,
+ <Suit.DIAMONDS: ('♦', 'd', 'D')>,
+ <Suit.HEARTS: ('♥', 'h', 'H')>,
+ <Suit.SPADES: ('♠', 's', 'S')>]
 
-Test
-----
 
-I'm lazy :D
+FAQ
+---
+**Q:** Why can I only declare tuples and not any iterable in MultiValueEnum?
+
+**A:** This way class definition looks clean. By default you don't have to put paranthesis
+if you define a tuple, but you need to if you want to define a list.
+Tuples are simple, declaration should be minimal.
 
 
-More to come
-------------
+Testing
+-------
 
-See above :)
+.. code-block:: bash
+
+   $ python setup.py test
+
+
+Or install package in development mode and test with py.test::
+
+   $ pip install -e .
+   $ py.test
+
+
+License
+-------
+
+MIT license
