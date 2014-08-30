@@ -1,16 +1,11 @@
-enum34-custom
-=============
+enum34-custom |travis| |coveralls| |release| |downloads| |pythons| |license|
+============================================================================
 
 What
 ----
 
 Custom Enum classes for the Python 3.4 enum module.
 
-
-Requirements
-------------
-
-* Python 3.4+
 
 Install
 -------
@@ -94,7 +89,20 @@ Or install package in development mode and test with py.test::
    $ py.test
 
 
-License
--------
 
-MIT license
+.. |travis| image:: https://travis-ci.org/Walkman/enum34-custom.svg?branch=master
+   :target: https://travis-ci.org/Walkman/enum34-custom
+.. |coveralls| image:: https://coveralls.io/repos/Walkman/enum34-custom/badge.png?branch=master
+   :target: https://coveralls.io/r/Walkman/enum34-custom?branch=master
+.. |pythons| image:: https://pypip.in/py_versions/enum34-custom/badge.svg
+   :target: https://pypi.python.org/pypi/enum34-custom/
+   :alt: Supported Python versions
+.. |release| image:: https://pypip.in/version/enum34-custom/badge.svg
+   :target: https://pypi.python.org/pypi/enum34-custom/
+   :alt: Latest Version
+.. |license| image:: https://pypip.in/license/enum34-custom/badge.svg
+   :target: https://github.com/Walkman/enum34-custom/blob/master/LICENSE
+   :alt: MIT License
+.. |downloads| image:: https://pypip.in/download/enum34-custom/badge.svg
+   :target: https://pypi.python.org/pypi/enum34-custom/
+   :alt: Downloads
