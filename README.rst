@@ -69,6 +69,10 @@ ValueError: L is not a valid Suit
 StrEnum
 ^^^^^^^
 
+Members of this enum are also instances of str and directly comparable to strings.
+str type is forced at declaration. Works the same way as described in Python
+Enum documentation, except for checking type.
+
 .. warning::
 
    It's not possible to use StrEnum with OrderableMixin, because the members of
@@ -76,6 +80,23 @@ StrEnum
    str ordering (e.g. '1' < '2', 'A' < 'B', etc.)
    If you want ordering by declaration, use OrderableMixin without typed
    subclass.
+
+
+CaseInsensitiveStrEnum
+^^^^^^^^^^^^^^^^^^^^^^
+
+Same as StrEnum, but members stored as uppercase, and comparing to them is
+case insensitive also::
+
+   from enum34_custom import CaseInsensitiveStrEnum
+   class MyCaseInsensitiveStrEnum(CaseInsensitiveStrEnum):
+       one = 'a'
+       two = 'b'
+
+   >>> MyCaseInsensitiveStrEnum('a') == 'A'
+   True
+   >>> MyCaseInsensitiveStrEnum.one == 'a'
+   True
 
 
 FAQ

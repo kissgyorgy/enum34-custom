@@ -1,9 +1,11 @@
-from enum import Enum, EnumMeta, _EnumDict
+from enum import (
+    Enum, EnumMeta, _EnumDict, _is_sunder, _is_dunder, _is_descriptor
+)
 from functools import total_ordering
 
 
-__version__ = '0.3.0'
-__all__ = ['MultiValueEnum', 'StrEnum']
+__version__ = '0.4.0'
+__all__ = ['MultiValueEnum', 'StrEnum', 'CaseInsensitiveStrEnum']
 
 
 class _MultiValueMeta(EnumMeta):
@@ -65,6 +67,27 @@ class StrEnum(str, Enum, metaclass=_CheckTypeEnumMeta):
     """Enum subclass which members are also instances of str
     and directly comparable to strings. str type is forced at declaration.
     """
+
+
+class _CaseInsensitiveEnumMeta(_CheckTypeEnumMeta):
+    def __init__(self, cls, bases, classdict):
+        for name, member in self._member_map_.items():
+            self._value2member_map_.pop(member.value)
+            member._value_ = member.value.upper()
+            # need to update also
+            self._value2member_map_[member.value] = member
+
+    def __call__(cls, value):
+        return cls.__new__(cls, value.upper())
+
+
+class CaseInsensitiveStrEnum(str, Enum, metaclass=_CaseInsensitiveEnumMeta):
+    def __new__(cls, *args):
+        args = tuple(arg.upper() for arg in args if isinstance(arg, str))
+        return super().__new__(cls, *args)
+
+    def __eq__(self, other):
+        return self.upper() == other.upper()
 
 
 @total_ordering
