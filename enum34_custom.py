@@ -2,16 +2,15 @@ from enum import Enum, EnumMeta
 from functools import total_ordering
 
 
-class _MultiMeta(EnumMeta):
-    def __new__(metacls, cls, bases, classdict):
-        enum_class = super().__new__(metacls, cls, bases, classdict)
 
+
+class _MultiValueMeta(EnumMeta):
+    def __init__(self, cls, bases, classdict):
         # make sure we only have tuple values, not single values
-        for member in enum_class.__members__.values():
+        for member in self.__members__.values():
             if not isinstance(member.value, tuple):
                 raise TypeError('{} = {!r}, should be tuple!'
                                 .format(member.name, member.value))
-        return enum_class
 
     def __call__(cls, value):
         """Return the appropriate instance with any of the values listed."""
