@@ -13,15 +13,15 @@ class _MultiMeta(EnumMeta):
                                 .format(member.name, member.value))
         return enum_class
 
-    def __call__(cls, suit):
+    def __call__(cls, value):
         """Return the appropriate instance with any of the values listed."""
 
         for member in cls:
-            if suit in member.value:
+            if value in member.value:
                 return member
 
         # raise ValueError otherwise
-        return super().__call__(suit)
+        return super().__call__(value)
 
 
 class MultiValueEnum(Enum, metaclass=_MultiMeta):
