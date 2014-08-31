@@ -22,9 +22,12 @@ class _MultiValueMeta(EnumMeta):
             raise ValueError("%s is not a valid %s" % (value, cls.__name__))
 
 
+class MultiValueEnum(Enum, metaclass=_MultiValueMeta):
+    """Enum subclass where members can have multiple values.
+    You can reference a member by any of its value in the associated tuple.
+    """
 
-class MultiValueEnum(Enum, metaclass=_MultiMeta):
-    """Enum subclass where members are declared as tuples."""
+
 
 
 @total_ordering
