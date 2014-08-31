@@ -18,9 +18,9 @@ class _MultiValueMeta(EnumMeta):
         for member in cls:
             if value in member.value:
                 return member
+        else:
+            raise ValueError("%s is not a valid %s" % (value, cls.__name__))
 
-        # raise ValueError otherwise
-        return super().__call__(value)
 
 
 class MultiValueEnum(Enum, metaclass=_MultiMeta):
