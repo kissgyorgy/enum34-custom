@@ -66,6 +66,18 @@ ValueError: L is not a valid Suit
  <Suit.SPADES: ('♠', 's', 'S')>]
 
 
+StrEnum
+^^^^^^^
+
+.. warning::
+
+   It's not possible to use StrEnum with OrderableMixin, because the members of
+   StrEnum are also instances of str and ordering members will happen beased on
+   str ordering (e.g. '1' < '2', 'A' < 'B', etc.)
+   If you want ordering by declaration, use OrderableMixin without typed
+   subclass.
+
+
 FAQ
 ---
 **Q:** Why can I only declare tuples and not any iterable in MultiValueEnum?
