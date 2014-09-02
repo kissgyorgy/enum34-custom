@@ -72,24 +72,41 @@ ValueError: L is not a valid Suit
  <Suit.SPADES: ('♠', 's', 'S')>]
 
 
-.. warning::
+You need to keep a couple of things in mind when using MultiValueEnum:
 
-   You need to keep a couple of things in mind when using MultiValueEnum:
+* Generators will immediately be exhausted at class creation time!
+* To conform to the standard library behavior, overlapping iterables are
+  considered aliases, and works the same way as in stdlib
+  (lookup will match the first declared element)::
 
-   * Generators will immediately be exhausted at class creation time!
-   * To conform to the standard library behavior, overlapping iterables are
-     considered aliases, and works the same way as in stdlib
-     (lookup will match the first declared element)::
+      >>> class MyOverLappingMVE(MultiValueEnum):
+      ...    A = (0, 1, 2, 3, 4)
+      ...    B = (4, 5, 6, 7, 8)
+      >>> MyOverLappingMVE(4) == MyOverLappingMVE.A
+      True
 
-        >>> class MyOverLappingMVE(MultiValueEnum):
-        ...    A = (0, 1, 2, 3, 4)
-        ...    B = (4, 5, 6, 7, 8)
-        >>> MyOverLappingMVE(4) == MyOverLappingMVE.A
-        True
+  If you want to make sure, no overlapping elements are present between members,
+  you can use the no_overlap decorator::
 
-   * Beware with storing lots of data, every value will stored twice
-     (MultiValueEnum stores values internally in a set for faster lookups)
-   * If you declare a dict as a value, keys will be looked up (as expected)
+      >>> from enum34_custom import MultiValueEnum, no_overlap
+
+      >>> @no_overlap
+      ...: class NoOverLappingEnum(MultiValueEnum):
+      ...:     A = (1, 2, 3)
+      ...:     B = (3, 4, 5)
+      ...:
+      /Users/walkman/Projects/enum34-custom/enum34_custom.py in no_overlap(multienum)
+           55                                   (alias, name, intersection) in duplicates])
+           56         raise ValueError('common element found in {!r}: {}'
+      ---> 57                          .format(multienum, alias_details))
+           58     return multienum
+           59
+
+      ValueError: common element found in <enum 'NoOverLappingEnum'>: B & A -> {3}
+
+* Beware with storing lots of data, every value will stored twice
+  (MultiValueEnum stores values internally in a set for faster lookups)
+* If you declare a dict as a value, keys will be looked up (as expected)
 
 
 StrEnum
