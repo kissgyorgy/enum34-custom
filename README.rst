@@ -38,71 +38,78 @@ It might be usable for e.g. Equivalence Class Partitioning (ECP/EC testing).
        HEARTS =   '♥', 'h', 'H'
        SPADES =   '♠', 's', 'S'
 
->>> print(Suit.CLUBS)
-Suit.CLUBS
+   >>> print(Suit.CLUBS)
+   Suit.CLUBS
 
->>> Suit.CLUBS
-<Suit.CLUBS: ('♣', 'c', 'C')>
+   >>> Suit.CLUBS
+   <Suit.CLUBS: ('♣', 'c', 'C')>
 
->>> Suit('c')
-<Suit.CLUBS: ('♣', 'c', 'C')>
+   >>> Suit('c')
+   <Suit.CLUBS: ('♣', 'c', 'C')>
 
->>> Suit('c') is Suit('C') is Suit('♣') is Suit.CLUBS
-True
+   >>> Suit('c') is Suit('C') is Suit('♣') is Suit.CLUBS
+   True
 
->>> import pickle
->>> pickle.loads(pickle.dumps(Suit('c'))) is Suit('♣')
-True
+   >>> import pickle
+   >>> pickle.loads(pickle.dumps(Suit('c'))) is Suit('♣')
+   True
 
->>> Suit('L')
-Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
-  File "/Users/walkman/Projects/enum34-custom/enum34_custom.py", line 19, in __call__
-    return super().__call__(suit)
-  File "/usr/local/Cellar/python3/3.4.1/Frameworks/Python.framework/Versions/3.4/lib/python3.4/enum.py", line 222, in __call__
-    return cls.__new__(cls, value)
-  File "/usr/local/Cellar/python3/3.4.1/Frameworks/Python.framework/Versions/3.4/lib/python3.4/enum.py", line 457, in __new__
-    raise ValueError("%s is not a valid %s" % (value, cls.__name__))
-ValueError: L is not a valid Suit
+   >>> Suit('L')
+   Traceback (most recent call last):
+     File "<stdin>", line 1, in <module>
+     File "/Users/walkman/Projects/enum34-custom/enum34_custom.py", line 19, in __call__
+       return super().__call__(suit)
+     File "/usr/local/Cellar/python3/3.4.1/Frameworks/Python.framework/Versions/3.4/lib/python3.4/enum.py", line 222, in __call__
+       return cls.__new__(cls, value)
+     File "/usr/local/Cellar/python3/3.4.1/Frameworks/Python.framework/Versions/3.4/lib/python3.4/enum.py", line 457, in __new__
+       raise ValueError("%s is not a valid %s" % (value, cls.__name__))
+   ValueError: L is not a valid Suit
 
->>> list(Suit)
-[<Suit.CLUBS: ('♣', 'c', 'C')>,
- <Suit.DIAMONDS: ('♦', 'd', 'D')>,
- <Suit.HEARTS: ('♥', 'h', 'H')>,
- <Suit.SPADES: ('♠', 's', 'S')>]
+   >>> list(Suit)
+   [<Suit.CLUBS: ('♣', 'c', 'C')>,
+    <Suit.DIAMONDS: ('♦', 'd', 'D')>,
+    <Suit.HEARTS: ('♥', 'h', 'H')>,
+    <Suit.SPADES: ('♠', 's', 'S')>]
 
 
-You need to keep a couple of things in mind when using MultiValueEnum:
+.. warning::
+
+   You need to keep a couple of things in mind when using MultiValueEnum:
+
 
 * Generators will immediately be exhausted at class creation time!
 * To conform to the standard library behavior, overlapping iterables are
   considered aliases, and works the same way as in stdlib
-  (lookup will match the first declared element)::
+  (lookup will match the first declared element):
 
-      >>> class MyOverLappingMVE(MultiValueEnum):
-      ...    A = (0, 1, 2, 3, 4)
-      ...    B = (4, 5, 6, 7, 8)
-      >>> MyOverLappingMVE(4) == MyOverLappingMVE.A
-      True
+  .. code-block:: python
+
+     >>> class MyOverLappingMVE(MultiValueEnum):
+     ...     A = (0, 1, 2, 3, 4)
+     ...     B = (4, 5, 6, 7, 8)
+     >>> MyOverLappingMVE(4)
+     <MyOverLappingMVE.A: (0, 1, 2, 3, 4)>
 
   If you want to make sure, no overlapping elements are present between members,
-  you can use the no_overlap decorator::
+  you can use the no_overlap decorator:
 
-      >>> from enum34_custom import MultiValueEnum, no_overlap
+  .. code-block:: python
 
-      >>> @no_overlap
-      ...: class NoOverLappingEnum(MultiValueEnum):
-      ...:     A = (1, 2, 3)
-      ...:     B = (3, 4, 5)
-      ...:
-      /Users/walkman/Projects/enum34-custom/enum34_custom.py in no_overlap(multienum)
-           55                                   (alias, name, intersection) in duplicates])
-           56         raise ValueError('common element found in {!r}: {}'
-      ---> 57                          .format(multienum, alias_details))
-           58     return multienum
-           59
+     >>> from enum34_custom import MultiValueEnum, no_overlap
 
-      ValueError: common element found in <enum 'NoOverLappingEnum'>: B & A -> {3}
+     >>> @no_overlap
+     ... class NoOverLappingEnum(MultiValueEnum):
+     ...     A = (1, 2, 3)
+     ...     B = (3, 4, 5)
+     ...
+     /Users/walkman/Projects/enum34-custom/enum34_custom.py in no_overlap(multienum)
+          55                                   (alias, name, intersection) in duplicates])
+          56         raise ValueError('common element found in {!r}: {}'
+     ---> 57                          .format(multienum, alias_details))
+          58     return multienum
+          59
+
+     ValueError: common element found in <enum 'NoOverLappingEnum'>: B & A -> {3}
 
 * Beware with storing lots of data, every value will stored twice
   (MultiValueEnum stores values internally in a set for faster lookups)
@@ -129,7 +136,9 @@ CaseInsensitiveStrEnum
 ^^^^^^^^^^^^^^^^^^^^^^
 
 Same as StrEnum, but members stored as uppercase, and comparing to them is
-case insensitive also::
+case insensitive also:
+
+.. code-block:: python
 
    from enum34_custom import CaseInsensitiveStrEnum
    class MyCaseInsensitiveStrEnum(CaseInsensitiveStrEnum):
@@ -168,17 +177,22 @@ Or install package in development mode and test with py.test::
 
 .. |travis| image:: https://travis-ci.org/Walkman/enum34-custom.svg?branch=master
    :target: https://travis-ci.org/Walkman/enum34-custom
+
 .. |coveralls| image:: https://coveralls.io/repos/Walkman/enum34-custom/badge.png?branch=master
    :target: https://coveralls.io/r/Walkman/enum34-custom?branch=master
+
 .. |pythons| image:: https://pypip.in/py_versions/enum34-custom/badge.svg
    :target: https://pypi.python.org/pypi/enum34-custom/
    :alt: Supported Python versions
+
 .. |release| image:: https://pypip.in/version/enum34-custom/badge.svg
    :target: https://pypi.python.org/pypi/enum34-custom/
    :alt: Latest Version
+
 .. |license| image:: https://pypip.in/license/enum34-custom/badge.svg
    :target: https://github.com/Walkman/enum34-custom/blob/master/LICENSE
    :alt: MIT License
+
 .. |downloads| image:: https://pypip.in/download/enum34-custom/badge.svg
    :target: https://pypi.python.org/pypi/enum34-custom/
    :alt: Downloads
