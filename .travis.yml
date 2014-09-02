@@ -3,6 +3,7 @@ python: '3.4'
 install:
   - 'python setup.py install'
   - 'pip install coverage'
+  - 'pip install pytest-raisesregexp'
   - 'pip install coveralls'
-script: 'coverage run --source "." --omit "setup.py" -m py.test'
+script: 'coverage run --source . --omit setup.py -m py.test'
 after_success: coveralls

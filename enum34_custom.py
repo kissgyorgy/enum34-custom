@@ -1,34 +1,61 @@
-from enum import (
-    Enum, EnumMeta, _EnumDict, _is_sunder, _is_dunder, _is_descriptor
-)
+from enum import Enum, EnumMeta, _EnumDict
 from functools import total_ordering
+from collections import Iterable
 
 
-__version__ = '0.4.0'
-__all__ = ['MultiValueEnum', 'StrEnum', 'CaseInsensitiveStrEnum']
+__version__ = '0.5.1'
+__all__ = ['MultiValueEnum', 'no_overlap', 'StrEnum', 'CaseInsensitiveStrEnum']
 
 
 class _MultiValueMeta(EnumMeta):
-    def __init__(self, cls, bases, classdict):
+    def __init__(self, clsname, bases, classdict):
         # make sure we only have tuple values, not single values
         for member in self.__members__.values():
-            if not isinstance(member.value, tuple):
-                raise TypeError('{} = {!r}, should be tuple!'
-                                .format(member.name, member.value))
+            val = member.value
+            if not isinstance(val, Iterable) or isinstance(val, str):
+                raise TypeError('{} = {!r}, should be iterable, not {}!'
+                    .format(member.name, val, type(val))
+                )
+            # set is faster to lookup
+            member._lookup_set_ = set(val)
 
     def __call__(cls, value):
         """Return the appropriate instance with any of the values listed."""
         for member in cls:
-            if value in member.value:
+            if value in member._lookup_set_:
                 return member
         else:
             raise ValueError("%s is not a valid %s" % (value, cls.__name__))
 
 
 class MultiValueEnum(Enum, metaclass=_MultiValueMeta):
-    """Enum subclass where members can have multiple values.
-    You can reference a member by any of its value in the associated tuple.
+    """Enum subclass where a member can be any iterable (except str).
+    You can reference a member by any of its element in the associated iterable.
     """
+
+
+def no_overlap(multienum):
+    """Class decorator for MultiValueEnum ensuring non overlapping elements
+    in member values. Other words: ensure no element in any member value is
+    present in any other member value.
+    """
+    duplicates = []
+    members = []
+
+    for member in multienum.__members__.values():
+        for prev_member in members:
+            intersection = member._lookup_set_ & prev_member._lookup_set_
+            if intersection:
+                duplicates.append((member.name, prev_member.name, intersection))
+        members.append(member)
+
+    if duplicates:
+        alias_details = ', '.join(["{} & {} -> {}"
+                                  .format(alias, name, intersection) for
+                                  (alias, name, intersection) in duplicates])
+        raise ValueError('common element found in {!r}: {}'
+                         .format(multienum, alias_details))
+    return multienum
 
 
 class _CheckTypeDict(_EnumDict):
