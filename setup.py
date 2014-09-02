@@ -23,7 +23,7 @@ class PyTest(TestCommand):
 
 setup(
     name = 'enum34-custom',
-    version = '0.5.0',
+    version = '0.5.1',
     description = 'Custom Enum classes for Python 3.4',
     long_description = open('README.rst').read(),
     classifiers = [
@@ -40,6 +40,6 @@ setup(
     url = 'https://github.com/Walkman/enum34-custom',
     license = 'MIT',
     py_modules = ['enum34_custom'],
-    tests_require = ['pytest'],
+    tests_require = ['pytest', 'pytest-raisesregexp'],
     cmdclass = {'test': PyTest},
 )
