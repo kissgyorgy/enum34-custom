@@ -1,5 +1,7 @@
-enum34-custom |travis| |coveralls| |release| |downloads| |pythons| |license|
-============================================================================
+enum34-custom
+=============
+
+|travis| |coveralls| |release| |downloads| |pythons| |license|
 
 What
 ----
@@ -21,16 +23,20 @@ Usage
 MultiValueEnum
 ^^^^^^^^^^^^^^
 
+Enum subclass where a member can be any iterable (even a generator, except str).
+You can reference a member by any of its element in the associated iterable.
+It might be usable for e.g. Equivalence Class Partitioning (ECP/EC testing).
+
+
 .. code-block:: python
 
-    from enum34_custom import MultiValueEnum
+   from enum34_custom import MultiValueEnum
 
-    class Suit(MultiValueEnum):
-        CLUBS =    '♣', 'c', 'C'
-        DIAMONDS = '♦', 'd', 'D'
-        HEARTS =   '♥', 'h', 'H'
-        SPADES =   '♠', 's', 'S'
-
+   class Suit(MultiValueEnum):
+       CLUBS =    '♣', 'c', 'C'
+       DIAMONDS = '♦', 'd', 'D'
+       HEARTS =   '♥', 'h', 'H'
+       SPADES =   '♠', 's', 'S'
 
 >>> print(Suit.CLUBS)
 Suit.CLUBS
@@ -64,6 +70,26 @@ ValueError: L is not a valid Suit
  <Suit.DIAMONDS: ('♦', 'd', 'D')>,
  <Suit.HEARTS: ('♥', 'h', 'H')>,
  <Suit.SPADES: ('♠', 's', 'S')>]
+
+
+.. warning::
+
+   You need to keep a couple of things in mind when using MultiValueEnum:
+
+   * Generators will immediately be exhausted at class creation time!
+   * To conform to the standard library behavior, overlapping iterables are
+     considered aliases, and works the same way as in stdlib
+     (lookup will match the first declared element)::
+
+        >>> class MyOverLappingMVE(MultiValueEnum):
+        ...    A = (0, 1, 2, 3, 4)
+        ...    B = (4, 5, 6, 7, 8)
+        >>> MyOverLappingMVE(4) == MyOverLappingMVE.A
+        True
+
+   * Beware with storing lots of data, every value will stored twice
+     (MultiValueEnum stores values internally in a set for faster lookups)
+   * If you declare a dict as a value, keys will be looked up (as expected)
 
 
 StrEnum

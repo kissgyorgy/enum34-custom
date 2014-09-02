@@ -31,8 +31,8 @@ class _MultiValueMeta(EnumMeta):
 
 
 class MultiValueEnum(Enum, metaclass=_MultiValueMeta):
-    """Enum subclass where members can have multiple values.
-    You can reference a member by any of its value in the associated tuple.
+    """Enum subclass where a member can be any iterable (except str).
+    You can reference a member by any of its element in the associated iterable.
     """
 
 
