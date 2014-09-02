@@ -151,15 +151,6 @@ case insensitive also:
    True
 
 
-FAQ
----
-**Q:** Why can I only declare tuples and not any iterable in MultiValueEnum?
-
-**A:** This way class definition looks clean. By default you don't have to put paranthesis
-if you define a tuple, but you need to if you want to define a list.
-Tuples are simple, declaration should be minimal.
-
-
 Testing
 -------
 
