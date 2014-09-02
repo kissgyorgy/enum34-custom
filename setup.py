@@ -23,10 +23,11 @@ class PyTest(TestCommand):
 
 setup(
     name = 'enum34-custom',
-    version = '0.4.0',
+    version = '0.5.0',
     description = 'Custom Enum classes for Python 3.4',
     long_description = open('README.rst').read(),
     classifiers = [
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3.4',

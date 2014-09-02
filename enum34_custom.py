@@ -2,24 +2,29 @@ from enum import (
     Enum, EnumMeta, _EnumDict, _is_sunder, _is_dunder, _is_descriptor
 )
 from functools import total_ordering
+from collections import Iterable
 
 
-__version__ = '0.4.0'
+__version__ = '0.5.0'
 __all__ = ['MultiValueEnum', 'StrEnum', 'CaseInsensitiveStrEnum']
 
 
 class _MultiValueMeta(EnumMeta):
-    def __init__(self, cls, bases, classdict):
+    def __init__(self, clsname, bases, classdict):
         # make sure we only have tuple values, not single values
         for member in self.__members__.values():
-            if not isinstance(member.value, tuple):
-                raise TypeError('{} = {!r}, should be tuple!'
-                                .format(member.name, member.value))
+            val = member.value
+            if not isinstance(val, Iterable) or isinstance(val, str):
+                raise TypeError('{} = {!r}, should be iterable, not {}!'
+                    .format(member.name, val, type(val))
+                )
+            # set is faster to lookup
+            member._lookup_set_ = set(val)
 
     def __call__(cls, value):
         """Return the appropriate instance with any of the values listed."""
         for member in cls:
-            if value in member.value:
+            if value in member._lookup_set_:
                 return member
         else:
             raise ValueError("%s is not a valid %s" % (value, cls.__name__))

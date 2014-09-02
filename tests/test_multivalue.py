@@ -22,7 +22,9 @@ def test_equality():
 
 def test_not_comparable_with_other_types():
     assert MyMultiValueEnum(2) != MyOrderableMultiValueEnum(2)
+    # because it's an instance of the class.
     assert MyMultiValueEnum(2) != (2, 'two')
+    assert MyMultiValueEnum(2).value == (2, 'two')
 
 
 def test_identity():
@@ -53,12 +55,6 @@ def test_not_tuple_members_raises_TypeError():
         class MyBadMultiValueEnum(MultiValueEnum):
             one = 1, 'one'
             two = 2
-
-    with raises(TypeError):
-        class MyBadMultiValueEnum2(MultiValueEnum):
-            one = [1, 'one']
-            two = [2, 'two']
-
 
 def test_incorrect_value_raises_ValueError():
     with raises(ValueError):
@@ -105,3 +101,133 @@ def test_orderable_with_mixin():
     assert MyOrderableMultiValueEnum('three') >= MyOrderableMultiValueEnum('two')
     assert MyOrderableMultiValueEnum(3) >= MyOrderableMultiValueEnum('One')
     assert MyOrderableMultiValueEnum.three >= MyOrderableMultiValueEnum.one
+
+
+def test_lookup_like_a_dict_is_the_same_as_call():
+    assert MyMultiValueEnum['one'] == MyMultiValueEnum.one == MyMultiValueEnum(1)
+
+
+class TestAcceptAnyIterable:
+    def test_accept_set(self):
+        class MySetMVE(MultiValueEnum):
+            A = set('abcde')
+            B = set('fghjk')
+
+        assert MySetMVE.A.value == {'a', 'b', 'c', 'd', 'e'}
+        assert MySetMVE('h') == MySetMVE.B
+
+    def test_accept_list(self):
+        class MyListMVE(MultiValueEnum):
+            A = [n for n in range(5)]
+            B = list('abcde')
+
+        assert MyListMVE.A.value == [0, 1, 2, 3, 4]
+        assert MyListMVE('e') == MyListMVE.B
+
+    def test_accept_even_generators(self):
+        class MyGenMVE(MultiValueEnum):
+            A = range(5)
+            # generator expressions!
+            B = (n for n in (5, 6, 7, 8, 9))
+            C = (s for s in 'abcde')
+
+        assert MyGenMVE(4) == MyGenMVE.A
+        assert MyGenMVE(5) == MyGenMVE.B
+        assert MyGenMVE('a') == MyGenMVE.C
+        assert MyGenMVE.A.value == range(5)
+
+    def test_generators_are_immediatly_exhausted(self):
+        class MyExhGenMVE(MultiValueEnum):
+            A = (n for n in (0, 1, 2, 3, 4))
+            B = (n for n in (5, 6, 7, 8, 9))
+
+        # exhausted generator at class instantiation!
+        assert list(MyExhGenMVE.A.value) == []
+
+        # you can still look up!
+        assert MyExhGenMVE(0) == MyExhGenMVE.A
+        assert MyExhGenMVE(5) == MyExhGenMVE.B
+
+        # as many time as you want
+        assert MyExhGenMVE(5) == MyExhGenMVE.B
+        assert MyExhGenMVE(5) == MyExhGenMVE.B
+
+    def test_dict_keys_will_be_looked_up(self):
+        class MyDictMVE(MultiValueEnum):
+            A = dict(a=1, b=2, c=3)
+            B = {4: 'd', 5: 'e', 6: 'f'}
+
+        assert MyDictMVE('a') == MyDictMVE.A
+        assert MyDictMVE(4) == MyDictMVE.B
+
+        with raises(ValueError):
+            # no such key in either A or B
+            MyDictMVE(2)
+
+        with raises(ValueError):
+            MyDictMVE('f')
+
+    def test_except_for_str(self):
+        with raises(TypeError):
+            class MyBadStrMVE(MultiValueEnum):
+                A = 'abcde'
+                B = 'fghij'
+
+    def test_make_it_a_list(self):
+        class MyGoodStrMVE(MultiValueEnum):
+            A = list('abcde')
+            B = list('fghij')
+
+        assert MyGoodStrMVE('a') == MyGoodStrMVE.A
+        assert MyGoodStrMVE('f') == MyGoodStrMVE.B
+
+
+class TestReprShowsTypeDefinedInDeclaration:
+    def test_generator(self):
+        class MyGenMVE(MultiValueEnum):
+            A = range(5)
+            # generator expressions!
+            B = (n for n in (5, 6, 7, 8, 9))
+            C = (s for s in 'abcde')
+
+        assert repr(MyGenMVE.A) == '<MyGenMVE.A: range(0, 5)>'
+        assert '<generator object <genexpr> at' in repr(MyGenMVE.B)
+        assert '<generator object <genexpr> at' in repr(MyGenMVE.C)
+
+    def test_set(self):
+        class MySetMVE(MultiValueEnum):
+            A = set((1, 2, 3, 4, 5))
+            # generator expressions!
+            B = set((5, 6, 7, 8, 9))
+            C = set('abcde')
+
+        repr_a = repr(MySetMVE.A)
+        # set elements are unorderable, never fixed, so have to test this way
+        assert all(s in repr_a for s in
+                   ('<MySetMVE.A: {', "1" , "2", "3", "4", "5", '}'))
+
+        repr_c = repr(MySetMVE.C)
+        assert all(s in repr_c for s in
+                   ('<MySetMVE.C: {', "'a'" , "'b'", "'c'", "'d'", "'e'", '}'))
+
+
+class TestOverlappingBehavior:
+    def test_overlapping_elements_behave_as_aliases(self):
+        class MyOverLappingMVE(MultiValueEnum):
+            A = (0, 1, 2, 3, 4)
+            B = (4, 5, 6, 7, 8)
+
+        # 4 is the overlapping element
+        assert MyOverLappingMVE(4) == MyOverLappingMVE.A
+        assert MyOverLappingMVE(5) == MyOverLappingMVE.B
+
+    def test_overlapping_generator(self):
+        class MyOverLappingGenMVE(MultiValueEnum):
+            A = range(5)
+            B = (n for n in (4, 5, 6, 7, 8))
+
+        assert list(MyOverLappingGenMVE.A.value) == [0, 1, 2, 3, 4]
+
+        # 4 is the overlapping element
+        assert MyOverLappingGenMVE(4) == MyOverLappingGenMVE.A
+        assert MyOverLappingGenMVE(5) == MyOverLappingGenMVE.B
