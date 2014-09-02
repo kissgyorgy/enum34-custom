@@ -1,12 +1,10 @@
-from enum import (
-    Enum, EnumMeta, _EnumDict, _is_sunder, _is_dunder, _is_descriptor
-)
+from enum import Enum, EnumMeta, _EnumDict
 from functools import total_ordering
 from collections import Iterable
 
 
 __version__ = '0.5.0'
-__all__ = ['MultiValueEnum', 'StrEnum', 'CaseInsensitiveStrEnum']
+__all__ = ['MultiValueEnum', 'no_overlap', 'StrEnum', 'CaseInsensitiveStrEnum']
 
 
 class _MultiValueMeta(EnumMeta):
@@ -34,6 +32,30 @@ class MultiValueEnum(Enum, metaclass=_MultiValueMeta):
     """Enum subclass where a member can be any iterable (except str).
     You can reference a member by any of its element in the associated iterable.
     """
+
+
+def no_overlap(multienum):
+    """Class decorator for MultiValueEnum ensuring non overlapping elements
+    in member values. Other words: ensure no element in any member value is
+    present in any other member value.
+    """
+    duplicates = []
+    members = []
+
+    for member in multienum.__members__.values():
+        for prev_member in members:
+            intersection = member._lookup_set_ & prev_member._lookup_set_
+            if intersection:
+                duplicates.append((member.name, prev_member.name, intersection))
+        members.append(member)
+
+    if duplicates:
+        alias_details = ', '.join(["{} & {} -> {}"
+                                  .format(alias, name, intersection) for
+                                  (alias, name, intersection) in duplicates])
+        raise ValueError('common element found in {!r}: {}'
+                         .format(multienum, alias_details))
+    return multienum
 
 
 class _CheckTypeDict(_EnumDict):

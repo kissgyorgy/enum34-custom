@@ -1,5 +1,5 @@
-from pytest import raises
-from enum34_custom import MultiValueEnum, OrderableMixin
+from pytest import raises, raises_regexp
+from enum34_custom import MultiValueEnum, OrderableMixin, no_overlap
 
 
 class MyMultiValueEnum(MultiValueEnum):
@@ -231,3 +231,33 @@ class TestOverlappingBehavior:
         # 4 is the overlapping element
         assert MyOverLappingGenMVE(4) == MyOverLappingGenMVE.A
         assert MyOverLappingGenMVE(5) == MyOverLappingGenMVE.B
+
+
+class TestNoOverapping:
+    def test_when_decorating_non_overlapping_enum_nothing_happens(self):
+        @no_overlap
+        class MyNonOverlappingListMVE(MultiValueEnum):
+            A = (1, 2, 3)
+            B = (4, 5, 6)
+
+        assert MyNonOverlappingListMVE.A.value == (1, 2, 3)
+        assert MyNonOverlappingListMVE(5) == MyNonOverlappingListMVE.B
+
+    def test_decorating_tuple(self):
+        error_message = r"common element found in "\
+                        r"<enum 'MyOverlappingListMVE'>: B & A -> \{3\}"
+        with raises_regexp(ValueError, error_message):
+            @no_overlap
+            class MyOverlappingListMVE(MultiValueEnum):
+                A = (1, 2, 3)
+                B = (3, 4, 5)
+
+    def test_decorating_generator(self):
+        error_message = r"common element found in "\
+                        r"<enum 'MyOverlappingGenMVE'>: "\
+                        r"B & A -> \{0, 1, 2, 3, 4\}"
+        with raises_regexp(ValueError, error_message):
+            @no_overlap
+            class MyOverlappingGenMVE(MultiValueEnum):
+                A = range(5)
+                B = range(10)
