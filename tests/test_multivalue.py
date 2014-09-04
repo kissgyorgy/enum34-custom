@@ -261,3 +261,28 @@ class TestNoOverapping:
             class MyOverlappingGenMVE(MultiValueEnum):
                 A = range(5)
                 B = range(10)
+
+
+class TestAliases:
+    def test_alias_should_pick_first_value(self):
+        class MyAliasedMVE(MultiValueEnum):
+            one = 1, 'one', 'One'
+            two = 2, 'two'
+            three = 3, 'three'
+            alias_to_one = 1, 'one', 'One'
+
+        assert MyAliasedMVE.alias_to_one is MyAliasedMVE.one
+        assert MyAliasedMVE('one') is MyAliasedMVE.one
+        assert MyAliasedMVE(1) is MyAliasedMVE.one
+
+    def test_defining_alias_with_referencing_previous(self):
+        class MyAliasedMVE(MultiValueEnum):
+            one = 1, 'one', 'One'
+            two = 2, 'two'
+            three = 3, 'three'
+            alias_to_one = one
+
+        assert MyAliasedMVE.alias_to_one is MyAliasedMVE.one
+        assert MyAliasedMVE('one') is MyAliasedMVE.one
+        assert MyAliasedMVE(1) is MyAliasedMVE.one
+
