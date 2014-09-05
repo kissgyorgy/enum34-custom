@@ -3,7 +3,7 @@ from functools import total_ordering
 from collections import Iterable
 
 
-__version__ = '0.5.3'
+__version__ = '0.5.4'
 __all__ = ['MultiValueEnum', 'no_overlap', 'StrEnum', 'CaseInsensitiveStrEnum']
 
 
@@ -125,6 +125,16 @@ class OrderableMixin:
     """Mixin for comparable Enums. The order is the definition order
     from smaller to bigger.
     """
+    # From Python manual:
+    # If a class that overrides __eq__() needs to retain the implementation of __hash__()
+    # from a parent class, the interpreter must be told this explicitly
+    def __hash__(self):
+        return super().__hash__()
+
+    def __reduce_ex__(self, proto):
+        # this will never run anyway, but the Enum class needs it
+        return self.__qualname__
+
     def __eq__(self, other):
         if self.__class__ is other.__class__:
             return self._value_ == other._value_

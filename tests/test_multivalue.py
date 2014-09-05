@@ -1,3 +1,4 @@
+import pickle
 from pytest import raises, raises_regexp
 from enum34_custom import MultiValueEnum, OrderableMixin, no_overlap
 
@@ -302,3 +303,14 @@ def test_lookup_by_original_value():
 
     assert MyOriginalMVE((1, 2)) is MyOriginalMVE.one
     assert MyOriginalMVE({3, 4}) is MyOriginalMVE.two
+
+
+def test_pickable():
+    # the class doesn't play nicely when defined inside other namespace
+    # http://stackoverflow.com/a/4677063/720077
+    dumped = pickle.dumps(MyOrderableMultiValueEnum.one)
+    assert pickle.loads(dumped) is MyOrderableMultiValueEnum.one
+
+
+def test_hashable():
+    assert hash(MyOrderableMultiValueEnum.one) == hash(MyOrderableMultiValueEnum(1))
