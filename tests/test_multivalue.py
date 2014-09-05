@@ -314,3 +314,13 @@ def test_pickable():
 
 def test_hashable():
     assert hash(MyOrderableMultiValueEnum.one) == hash(MyOrderableMultiValueEnum(1))
+
+
+def test_aliases_doesnt_get_listed():
+    class MyAliasedMVE(MultiValueEnum):
+        one = 1, 'one', 'One'
+        two = 2, 'two'
+        three = 3, 'three'
+        alias_to_one = 1, 'one', 'One'
+
+    assert list(MyAliasedMVE) == [MyAliasedMVE.one, MyAliasedMVE.two, MyAliasedMVE.three]
