@@ -3,7 +3,7 @@ from functools import total_ordering
 from collections import Iterable
 
 
-__version__ = '0.5.1'
+__version__ = '0.5.2'
 __all__ = ['MultiValueEnum', 'no_overlap', 'StrEnum', 'CaseInsensitiveStrEnum']
 
 
@@ -11,10 +11,10 @@ class _MultiValueMeta(EnumMeta):
     def __init__(self, clsname, bases, classdict):
         # make sure we only have tuple values, not single values
         for member in self.__members__.values():
-            val = member.value
+            val = member._value_
             if not isinstance(val, Iterable) or isinstance(val, str):
                 raise TypeError('{} = {!r}, should be iterable, not {}!'
-                    .format(member.name, val, type(val))
+                    .format(member._name_, val, type(val))
                 )
             # set is faster to lookup
             member._lookup_set_ = set(val)
@@ -46,7 +46,9 @@ def no_overlap(multienum):
         for prev_member in members:
             intersection = member._lookup_set_ & prev_member._lookup_set_
             if intersection:
-                duplicates.append((member.name, prev_member.name, intersection))
+                duplicates.append(
+                    (member._name_, prev_member._name_, intersection)
+                )
         members.append(member)
 
     if duplicates:
@@ -99,10 +101,10 @@ class StrEnum(str, Enum, metaclass=_CheckTypeEnumMeta):
 class _CaseInsensitiveEnumMeta(_CheckTypeEnumMeta):
     def __init__(self, cls, bases, classdict):
         for name, member in self._member_map_.items():
-            self._value2member_map_.pop(member.value)
+            self._value2member_map_.pop(member._value_)
             member._value_ = member.value.upper()
             # need to update also
-            self._value2member_map_[member.value] = member
+            self._value2member_map_[member._value_] = member
 
     def __call__(cls, value):
         return cls.__new__(cls, value.upper())
@@ -124,11 +126,11 @@ class OrderableMixin:
     """
     def __eq__(self, other):
         if self.__class__ is other.__class__:
-            return self.value == other.value
+            return self._value_ == other._value_
         return NotImplemented
 
     def __lt__(self, other):
         if self.__class__ is other.__class__:
             names = self.__class__._member_names_
-            return names.index(self.name) < names.index(other.name)
+            return names.index(self._name_) < names.index(other._name_)
         return NotImplemented

@@ -41,7 +41,8 @@ coverage:
 	coverage html
 	open htmlcov/index.html
 
-release: clean
+release: clean test
+	git push origin master
 	python setup.py sdist bdist_wheel upload
 
 dist: clean
