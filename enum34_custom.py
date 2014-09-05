@@ -3,7 +3,7 @@ from functools import total_ordering
 from collections import Iterable
 
 
-__version__ = '0.5.2'
+__version__ = '0.5.3'
 __all__ = ['MultiValueEnum', 'no_overlap', 'StrEnum', 'CaseInsensitiveStrEnum']
 
 
@@ -25,7 +25,8 @@ class _MultiValueMeta(EnumMeta):
             if value in member._lookup_set_:
                 return member
         else:
-            raise ValueError("%s is not a valid %s" % (value, cls.__name__))
+            # lookup by original value, enum instance, or raise ValueError
+            return super().__call__(value)
 
 
 class MultiValueEnum(Enum, metaclass=_MultiValueMeta):

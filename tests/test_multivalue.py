@@ -286,3 +286,19 @@ class TestAliases:
         assert MyAliasedMVE('one') is MyAliasedMVE.one
         assert MyAliasedMVE(1) is MyAliasedMVE.one
 
+
+def test_idempotency():
+    class MyIdempotentMVE(MultiValueEnum):
+        one = 1, 2
+        two = 3, 4
+
+    assert MyIdempotentMVE(MyIdempotentMVE.one) is MyIdempotentMVE.one
+
+
+def test_lookup_by_original_value():
+    class MyOriginalMVE(MultiValueEnum):
+        one = 1, 2
+        two = {3, 4}
+
+    assert MyOriginalMVE((1, 2)) is MyOriginalMVE.one
+    assert MyOriginalMVE({3, 4}) is MyOriginalMVE.two

@@ -42,7 +42,7 @@ coverage:
 	open htmlcov/index.html
 
 release: clean test
-	git push origin master
+	git push --tags origin master
 	python setup.py sdist bdist_wheel upload
 
 dist: clean
