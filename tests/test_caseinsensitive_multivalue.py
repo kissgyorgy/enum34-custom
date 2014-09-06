@@ -41,3 +41,10 @@ def test_no_overlap_decorator():
         class MyOverlappingCasiMVE(CaseInsensitiveMultiValueEnum):
             one = 1, 'one', 'oone'
             two = 1, 'two', 'twoo'
+
+
+def test_single_value():
+    with raises(TypeError):
+        class MyBadCaseIMVE(CaseInsensitiveMultiValueEnum):
+            one = 1, 'one', 'oone'
+            two = 2
