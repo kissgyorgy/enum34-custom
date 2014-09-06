@@ -116,6 +116,42 @@ It might be usable for e.g. Equivalence Class Partitioning (ECP/EC testing).
 * If you declare a dict as a value, keys will be looked up (as expected)
 
 
+CaseInsensitiveMultiValueEnum
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This works the same way as MultiValueEnum except if a member's value contains
+a str, those will be compared in a case-insensitive member.
+
+Consider the following example:
+
+.. code-block:: python
+
+   class SimpleMultiValueEnum(MultiValueEnum):
+       one = 1, 'one'
+       two = 2, 'two'
+
+   >>> SimpleMultiValueEnum('One')
+   /usr/local/Cellar/python3/3.4.1_1/Frameworks/Python.framework/Versions/3.4/lib/python3.4/enum.py in __new__(cls, value)
+       455                 if member.value == value:
+       456                     return member
+   --> 457         raise ValueError("%s is not a valid %s" % (value, cls.__name__))
+       458
+       459     def __repr__(self):
+
+   ValueError: One is not a valid SimpleMultiValueEnum
+
+While:
+
+.. code-block:: python
+
+   class CaseInsensitiveMVE(CaseInsensitiveMultiValueEnum):
+       one = 1, 'one'
+       two = 2, 'two'
+
+   >>> CaseInsensitiveMVE('One')
+   <CaseInsensitiveMVE.one: (1, 'one')>
+
+
 StrEnum
 ^^^^^^^
 

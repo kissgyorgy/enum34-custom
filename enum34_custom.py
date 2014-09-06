@@ -3,8 +3,9 @@ from functools import total_ordering
 from collections import Iterable
 
 
-__version__ = '0.5.4'
-__all__ = ['MultiValueEnum', 'no_overlap', 'StrEnum', 'CaseInsensitiveStrEnum']
+__version__ = '0.6.0'
+__all__ = ['MultiValueEnum', 'no_overlap', 'StrEnum', 'CaseInsensitiveStrEnum',
+           'CaseInsensitiveMultiValueEnum']
 
 
 class _MultiValueMeta(EnumMeta):
@@ -12,7 +13,7 @@ class _MultiValueMeta(EnumMeta):
         # make sure we only have tuple values, not single values
         for member in self.__members__.values():
             val = member._value_
-            if not isinstance(val, Iterable) or isinstance(val, str):
+            if not isinstance(val, Iterable) or type(val) == str:
                 raise TypeError('{} = {!r}, should be iterable, not {}!'
                     .format(member._name_, val, type(val))
                 )
@@ -32,6 +33,41 @@ class _MultiValueMeta(EnumMeta):
 class MultiValueEnum(Enum, metaclass=_MultiValueMeta):
     """Enum subclass where a member can be any iterable (except str).
     You can reference a member by any of its element in the associated iterable.
+    """
+
+
+class _CasInsensitiveMultiValueMeta(EnumMeta):
+    def __init__(self, clsname, bases, classdict):
+        # make sure we only have tuple values, not single values
+        for member in self.__members__.values():
+            val = member._value_
+            if not isinstance(val, Iterable) or type(val) == str:
+                raise TypeError('{} = {!r}, should be iterable, not {}!'
+                    .format(member._name_, val, type(val))
+                )
+            # set is faster to lookup
+            member._lookup_set_ = set()
+            for elem in val:
+                if type(elem) == str:
+                    elem = elem.upper()
+                member._lookup_set_.add(elem)
+
+    def __call__(cls, value):
+        """Return the appropriate instance with any of the values listed."""
+        compare = value.upper() if type(value) is str else value
+        for member in cls:
+            if compare in member._lookup_set_:
+                return member
+        else:
+            # lookup by original value, enum instance, or raise ValueError
+            return super().__call__(value)
+
+
+class CaseInsensitiveMultiValueEnum(
+    Enum, metaclass=_CasInsensitiveMultiValueMeta):
+    """Same as MultiValueEnum, except when member value contains an str,
+    they will be compared in a case-insensitive manner. Non-str types left
+    untouched.
     """
 
 
