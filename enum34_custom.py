@@ -12,13 +12,13 @@ class _MultiValueMeta(EnumMeta):
     def __init__(self, clsname, bases, classdict):
         # make sure we only have tuple values, not single values
         for member in self.__members__.values():
-            val = member._value_
-            if not isinstance(val, Iterable) or type(val) == str:
+            value = member._value_
+            if not isinstance(value, Iterable) or type(value) == str:
                 raise TypeError('{} = {!r}, should be iterable, not {}!'
-                    .format(member._name_, val, type(val))
+                    .format(member._name_, value, type(value))
                 )
             # set is faster to lookup
-            member._lookup_set_ = set(val)
+            member._lookup_set_ = set(value)
 
     def __call__(cls, value):
         """Return the appropriate instance with any of the values listed."""
@@ -40,14 +40,14 @@ class _CasInsensitiveMultiValueMeta(EnumMeta):
     def __init__(self, clsname, bases, classdict):
         # make sure we only have tuple values, not single values
         for member in self.__members__.values():
-            val = member._value_
-            if not isinstance(val, Iterable) or type(val) == str:
+            value = member._value_
+            if not isinstance(value, Iterable) or type(value) == str:
                 raise TypeError('{} = {!r}, should be iterable, not {}!'
-                    .format(member._name_, val, type(val))
+                    .format(member._name_, value, type(value))
                 )
             # set is faster to lookup
             member._lookup_set_ = set()
-            for elem in val:
+            for elem in value:
                 if type(elem) == str:
                     elem = elem.upper()
                 member._lookup_set_.add(elem)
