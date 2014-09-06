@@ -1,4 +1,7 @@
-from enum34_custom import CaseInsensitiveMultiValueEnum, OrderableMixin
+from enum34_custom import (
+    CaseInsensitiveMultiValueEnum, OrderableMixin, no_overlap
+)
+from pytest import raises
 
 
 class MyInsensitiveMVE(CaseInsensitiveMultiValueEnum):
@@ -30,3 +33,11 @@ def test_orderable():
 
     assert OrderableInsensitiveMVE.one < OrderableInsensitiveMVE.two
     assert OrderableInsensitiveMVE.two < OrderableInsensitiveMVE.three
+
+
+def test_no_overlap_decorator():
+    with raises(ValueError):
+        @no_overlap
+        class MyOverlappingCasiMVE(CaseInsensitiveMultiValueEnum):
+            one = 1, 'one', 'oone'
+            two = 1, 'two', 'twoo'
