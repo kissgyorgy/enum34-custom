@@ -3,7 +3,7 @@ from functools import total_ordering
 from collections import Iterable
 
 
-__version__ = '0.6.3'
+__version__ = '0.6.4'
 __all__ = ['MultiValueEnum', 'no_overlap', 'StrEnum', 'CaseInsensitiveStrEnum',
            'CaseInsensitiveMultiValueEnum']
 
@@ -13,7 +13,7 @@ class _MultiValueMeta(EnumMeta):
         # make sure we only have tuple values, not single values
         for member in self.__members__.values():
             value = member._value_
-            if not isinstance(value, Iterable) or type(value) == str:
+            if not isinstance(value, Iterable) or isinstance(value, str):
                 raise TypeError('{} = {!r}, should be iterable, not {}!'
                     .format(member._name_, value, type(value))
                 )
@@ -41,20 +41,20 @@ class _CasInsensitiveMultiValueMeta(EnumMeta):
         # make sure we only have tuple values, not single values
         for member in self.__members__.values():
             value = member._value_
-            if not isinstance(value, Iterable) or type(value) == str:
+            if not isinstance(value, Iterable) or isinstance(value, str):
                 raise TypeError('{} = {!r}, should be iterable, not {}!'
                     .format(member._name_, value, type(value))
                 )
             # set is faster to lookup
             member._lookup_set_ = set()
             for elem in value:
-                if type(elem) == str:
+                if isinstance(elem, str):
                     elem = elem.upper()
                 member._lookup_set_.add(elem)
 
     def __call__(cls, value):
         """Return the appropriate instance with any of the values listed."""
-        compare = value.upper() if type(value) is str else value
+        compare = value.upper() if isinstance(value, str) else value
         for member in cls:
             if compare in member._lookup_set_:
                 return member
