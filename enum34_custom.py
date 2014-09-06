@@ -3,31 +3,37 @@ from functools import total_ordering
 from collections import Iterable
 
 
-__version__ = '0.6.1'
+__version__ = '0.6.0'
 __all__ = ['MultiValueEnum', 'no_overlap', 'StrEnum', 'CaseInsensitiveStrEnum',
            'CaseInsensitiveMultiValueEnum']
 
 
-class MultiValueEnum(Enum):
+class _MultiValueMeta(EnumMeta):
+    def __init__(self, clsname, bases, classdict):
+        # make sure we only have tuple values, not single values
+        for member in self.__members__.values():
+            val = member._value_
+            if not isinstance(val, Iterable) or type(val) == str:
+                raise TypeError('{} = {!r}, should be iterable, not {}!'
+                    .format(member._name_, val, type(val))
+                )
+            # set is faster to lookup
+            member._lookup_set_ = set(val)
+
+    def __call__(cls, value):
+        """Return the appropriate instance with any of the values listed."""
+        for member in cls:
+            if value in member._lookup_set_:
+                return member
+        else:
+            # lookup by original value, enum instance, or raise ValueError
+            return super().__call__(value)
+
+
+class MultiValueEnum(Enum, metaclass=_MultiValueMeta):
     """Enum subclass where a member can be any iterable (except str).
     You can reference a member by any of its element in the associated iterable.
     """
-    def __new__(cls, *values):
-        # single values are wrapped in tuple, so this unwraps it
-        # to disallow non-iterable values
-        if len(values) == 1:
-            values = values[0]
-        if not isinstance(values, Iterable) or type(values) == str:
-            raise TypeError('{!r}, should be iterable, not {}!'
-                            .format(values, type(values))
-            )
-        obj = object.__new__(cls)
-        obj._value_ = values
-        for alias in values:
-            # don't touch if already set, so behave like alias
-            # described in python documentation
-            cls._value2member_map_.setdefault(alias, obj)
-        return obj
 
 
 class _CasInsensitiveMultiValueMeta(EnumMeta):
@@ -75,7 +81,7 @@ def no_overlap(multienum):
 
     for member in multienum.__members__.values():
         for prev_member in members:
-            intersection = set(member._value_) & set(prev_member._value_)
+            intersection = member._lookup_set_ & prev_member._lookup_set_
             if intersection:
                 duplicates.append(
                     (member._name_, prev_member._name_, intersection)
