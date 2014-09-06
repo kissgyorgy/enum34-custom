@@ -3,7 +3,7 @@ from functools import total_ordering
 from collections import Iterable
 
 
-__version__ = '0.6.0'
+__version__ = '0.6.3'
 __all__ = ['MultiValueEnum', 'no_overlap', 'StrEnum', 'CaseInsensitiveStrEnum',
            'CaseInsensitiveMultiValueEnum']
 

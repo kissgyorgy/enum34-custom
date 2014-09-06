@@ -57,6 +57,13 @@ def test_not_tuple_members_raises_TypeError():
             one = 1, 'one'
             two = 2
 
+
+def test_iterable_values_should_be_good_with_even_single_value():
+    class MyGoodMVE(MultiValueEnum):
+        one = 1, 'one'
+        two = 2,
+
+
 def test_incorrect_value_raises_ValueError():
     with raises(ValueError):
         MyMultiValueEnum('B')
