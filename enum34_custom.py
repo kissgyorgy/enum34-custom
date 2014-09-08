@@ -38,22 +38,16 @@ class _CasInsensitiveMultiValueMeta(EnumMeta):
                 raise TypeError('{} = {!r}, should be iterable, not {}!'
                     .format(member._name_, value, type(value))
                 )
-            # set is faster to lookup
-            member._lookup_set_ = set()
-            for elem in value:
-                if isinstance(elem, str):
-                    elem = elem.upper()
-                member._lookup_set_.add(elem)
+            for alias in value:
+                if isinstance(alias, str):
+                    alias = alias.upper()
+                self._value2member_map_.setdefault(alias, member)
 
     def __call__(cls, value):
         """Return the appropriate instance with any of the values listed."""
-        compare = value.upper() if isinstance(value, str) else value
-        for member in cls:
-            if compare in member._lookup_set_:
-                return member
-        else:
-            # lookup by original value, enum instance, or raise ValueError
-            return super().__call__(value)
+        if isinstance(value, str):
+            value = value.upper()
+        return super().__call__(value)
 
 
 class CaseInsensitiveMultiValueEnum(
