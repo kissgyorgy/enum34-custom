@@ -4,7 +4,7 @@ from setuptools.command.test import test as TestCommand
 
 setup(
     name = 'enum34-custom',
-    version = '0.6.4',
+    version = '0.6.5',
     description = 'Custom Enum classes for Python 3.4',
     long_description = open('README.rst').read(),
     classifiers = [

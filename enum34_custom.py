@@ -3,31 +3,24 @@ from functools import total_ordering
 from collections import Iterable
 
 
-__version__ = '0.6.4'
+__version__ = '0.6.5'
 __all__ = ['MultiValueEnum', 'no_overlap', 'StrEnum', 'CaseInsensitiveStrEnum',
            'CaseInsensitiveMultiValueEnum']
 
 
 class _MultiValueMeta(EnumMeta):
     def __init__(self, clsname, bases, classdict):
-        # make sure we only have tuple values, not single values
         for member in self.__members__.values():
-            value = member._value_
-            if not isinstance(value, Iterable) or isinstance(value, str):
+            values = member._value_
+            # make sure we only have tuple values, not single values
+            if not isinstance(values, Iterable) or isinstance(values, str):
                 raise TypeError('{} = {!r}, should be iterable, not {}!'
-                    .format(member._name_, value, type(value))
+                    .format(member._name_, values, type(values))
                 )
-            # set is faster to lookup
-            member._lookup_set_ = set(value)
-
-    def __call__(cls, value):
-        """Return the appropriate instance with any of the values listed."""
-        for member in cls:
-            if value in member._lookup_set_:
-                return member
-        else:
-            # lookup by original value, enum instance, or raise ValueError
-            return super().__call__(value)
+            for alias in values:
+                # don't touch if already set, so behave like alias
+                # described in python documentation
+                self._value2member_map_.setdefault(alias, member)
 
 
 class MultiValueEnum(Enum, metaclass=_MultiValueMeta):
@@ -81,7 +74,7 @@ def no_overlap(multienum):
 
     for member in multienum.__members__.values():
         for prev_member in members:
-            intersection = member._lookup_set_ & prev_member._lookup_set_
+            intersection = set(member._value_) & set(prev_member._value_)
             if intersection:
                 duplicates.append(
                     (member._name_, prev_member._name_, intersection)
