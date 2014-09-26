@@ -220,9 +220,13 @@ things that doesn't work very well on 2, which you should be aware:
   insensitive!)
 - Python 2 leaks variables from list comprehensions, so if you define your class
   like this:
-  class MyList(MultiValueEnum):
-      A = [n for n in range(5)]
-   MyList will have 'MyList.n' also!!!
+
+  .. code-block:: python
+
+     class MyList(MultiValueEnum):
+         A = [n for n in range(5)]
+
+  MyList will have 'MyList.n' also!!!
 
 
 Changes
