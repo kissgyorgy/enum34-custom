@@ -135,6 +135,8 @@ class TestAcceptAnyIterable:
         class MyListMVE(MultiValueEnum):
             A = [n for n in range(5)]
             B = list('abcde')
+            if six.PY2:
+                del n  # n leaked into MyListMVE namespace
 
         assert MyListMVE.A.value == [0, 1, 2, 3, 4]
         assert MyListMVE('e') == MyListMVE.B
