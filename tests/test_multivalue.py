@@ -1,6 +1,11 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 import pickle
+import six
+from six.moves import range
 from pytest import raises, raises_regexp
-from enum34_custom import MultiValueEnum, OrderableMixin, no_overlap
+from enum_custom import MultiValueEnum, OrderableMixin, no_overlap
 
 
 class MyMultiValueEnum(MultiValueEnum):
@@ -10,6 +15,8 @@ class MyMultiValueEnum(MultiValueEnum):
 
 
 class MyOrderableMultiValueEnum(OrderableMixin, MultiValueEnum):
+    if six.PY2:
+        __order__ = 'one two three'
     one = 1, 'one', 'One'
     two = 2, 'two'
     three = 3, 'three'
@@ -128,6 +135,8 @@ class TestAcceptAnyIterable:
         class MyListMVE(MultiValueEnum):
             A = [n for n in range(5)]
             B = list('abcde')
+            if six.PY2:
+                del n  # n leaked into MyListMVE namespace
 
         assert MyListMVE.A.value == [0, 1, 2, 3, 4]
         assert MyListMVE('e') == MyListMVE.B
@@ -142,7 +151,9 @@ class TestAcceptAnyIterable:
         assert MyGenMVE(4) == MyGenMVE.A
         assert MyGenMVE(5) == MyGenMVE.B
         assert MyGenMVE('a') == MyGenMVE.C
-        assert MyGenMVE.A.value == range(5)
+        if six.PY3:
+            # this is not true in Python2, because xrange(5) != xrange(5)
+            assert MyGenMVE.A.value == range(5)
 
     def test_generators_are_immediatly_exhausted(self):
         class MyExhGenMVE(MultiValueEnum):
@@ -198,7 +209,10 @@ class TestReprShowsTypeDefinedInDeclaration:
             B = (n for n in (5, 6, 7, 8, 9))
             C = (s for s in 'abcde')
 
-        assert repr(MyGenMVE.A) == '<MyGenMVE.A: range(0, 5)>'
+        if six.PY2:
+            assert repr(MyGenMVE.A) == '<MyGenMVE.A: xrange(5)>'
+        else:
+            assert repr(MyGenMVE.A) == '<MyGenMVE.A: range(0, 5)>'
         assert '<generator object <genexpr> at' in repr(MyGenMVE.B)
         assert '<generator object <genexpr> at' in repr(MyGenMVE.C)
 
@@ -211,12 +225,11 @@ class TestReprShowsTypeDefinedInDeclaration:
 
         repr_a = repr(MySetMVE.A)
         # set elements are unorderable, never fixed, so have to test this way
-        assert all(s in repr_a for s in
-                   ('<MySetMVE.A: {', "1" , "2", "3", "4", "5", '}'))
+        assert all(s in repr_a for s in ('<MySetMVE.A:', "1" , "2", "3", "4", "5"))
 
         repr_c = repr(MySetMVE.C)
         assert all(s in repr_c for s in
-                   ('<MySetMVE.C: {', "'a'" , "'b'", "'c'", "'d'", "'e'", '}'))
+                   ('<MySetMVE.C:', "'a'" , "'b'", "'c'", "'d'", "'e'",))
 
 
 class TestOverlappingBehavior:
@@ -231,6 +244,8 @@ class TestOverlappingBehavior:
 
     def test_overlapping_generator(self):
         class MyOverLappingGenMVE(MultiValueEnum):
+            if six.PY2:
+                __order__ = 'A B'
             A = range(5)
             B = (n for n in (4, 5, 6, 7, 8))
 
@@ -252,8 +267,11 @@ class TestNoOverapping:
         assert MyNonOverlappingListMVE(5) == MyNonOverlappingListMVE.B
 
     def test_decorating_tuple(self):
-        error_message = r"common element found in "\
-                        r"<enum 'MyOverlappingListMVE'>: B & A -> \{3\}"
+        error_message = r"common element found in <enum 'MyOverlappingListMVE'>: "
+        if six.PY2:
+            error_message += r"B & A -> set\(\[3\]\)"
+        else:
+            error_message += r"B & A -> \{3\}"
         with raises_regexp(ValueError, error_message):
             @no_overlap
             class MyOverlappingListMVE(MultiValueEnum):
@@ -261,9 +279,14 @@ class TestNoOverapping:
                 B = (3, 4, 5)
 
     def test_decorating_generator(self):
-        error_message = r"common element found in "\
-                        r"<enum 'MyOverlappingGenMVE'>: "\
-                        r"B & A -> \{0, 1, 2, 3, 4\}"
+        error_message = r"common element found in <enum 'MyOverlappingGenMVE'>: "
+        # random if A or B comes first
+        error_message += r"A|B & A|B -> "
+        if six.PY2:
+            error_message +=  r"set\(\[0, 1, 2, 3, 4\]\)"
+        else:
+            error_message += r"\{0, 1, 2, 3, 4\}"
+
         with raises_regexp(ValueError, error_message):
             @no_overlap
             class MyOverlappingGenMVE(MultiValueEnum):

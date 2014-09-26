@@ -1,9 +1,14 @@
 language: python
-python: '3.4'
+python:
+    - '2.7'
+    - '3.4'
+    - 'pypy'
 install:
-  - 'python setup.py install'
+  - 'pip install .'
   - 'pip install coverage'
   - 'pip install pytest-raisesregexp'
   - 'pip install coveralls'
+  - 'pip install six'
+  - 'pip install pytest'
 script: 'coverage run --source . --omit setup.py -m py.test'
 after_success: coveralls

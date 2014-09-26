@@ -1,5 +1,9 @@
-from enum34_custom import CaseInsensitiveStrEnum
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
+import six
 from pytest import raises
+from enum_custom import CaseInsensitiveStrEnum
 
 
 class MyCaseInsensitiveStrEnum(CaseInsensitiveStrEnum):
@@ -7,15 +11,15 @@ class MyCaseInsensitiveStrEnum(CaseInsensitiveStrEnum):
     two = 'b'
 
 
-def test_members_are_instances_of_builtin_str():
-    assert isinstance(MyCaseInsensitiveStrEnum.one, str)
+def test_members_are_instances_of_text_type():
+    assert isinstance(MyCaseInsensitiveStrEnum.one, six.text_type)
 
 
 def test_members_are_also_instances_of_StrEnum():
     assert isinstance(MyCaseInsensitiveStrEnum.one, MyCaseInsensitiveStrEnum)
 
 
-def test_raises_TypeError_with_not_str_type():
+def test_raises_TypeError_with_not_text_type():
     with raises(TypeError):
         class MyBadCaseInsensitiveStrEnum(CaseInsensitiveStrEnum):
             a = '1'

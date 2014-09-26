@@ -201,6 +201,42 @@ Or install package in development mode and test with py.test::
    $ py.test
 
 
+Differences between Python 2 and 3
+----------------------------------
+
+There are differences in how Python 2 and 3 creates classes, there are a couple of
+things that doesn't work very well on 2, which you should be aware:
+
+- xrange(5) != xrange(5)
+  This is the opposit in Python 3, because range(5) == range(5), however you can use
+  range(5) == range(5) in Python 2 in this case.
+- Python 2 have no definition order of members. This means you *have to* manually define
+  __order__ attribute to be able to compare members by definition order (e.g. with
+  OrderableMixin). See the details in `enum34 package dokumentation`_:
+- str vs unicode: This library doesn't mix and match str types either in Python2
+  it uses unicode in Python2 and str in Python3 and also enforces the type in
+  StrEnum, CaseInsensitiveStrEnum and ckeck for text type only in
+  CaseInsensitiveMultiValueEnum. (So if you pass str in Python2, it will not be case
+  insensitive!)
+- Python 2 leaks variables from list comprehensions, so if you define your class
+  like this:
+  class MyList(MultiValueEnum):
+      A = [n for n in range(5)]
+   MyList will have 'MyList.n' also!!!
+
+
+Changes
+-------
+
+v0.7.0
+^^^^^^
+
+- Python 2.7 support
+- Renamed module to enum_custom for consistency (enum34 package is called enum also).
+
+
+
+.. _enum34 package dokumentation: https://pypi.python.org/pypi/enum34
 
 .. |travis| image:: https://travis-ci.org/Walkman/enum34-custom.svg?branch=master
    :target: https://travis-ci.org/Walkman/enum34-custom
