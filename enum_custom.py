@@ -48,7 +48,7 @@ class _CasInsensitiveMultiValueMeta(EnumMeta):
         """Return the appropriate instance with any of the values listed."""
         if isinstance(value, str):
             value = value.upper()
-        return super().__call__(value)
+        return super(_CasInsensitiveMultiValueMeta, cls).__call__(value)
 
 
 class CaseInsensitiveMultiValueEnum(
@@ -87,11 +87,11 @@ def no_overlap(multienum):
 
 class _CheckTypeDict(_EnumDict):
     def __init__(self, expected_type):
-        super().__init__()
+        super(_CheckTypeDict, self).__init__()
         self._expected_type = expected_type
 
     def __setitem__(self, key, value):
-        super().__setitem__(key, value)
+        super(_CheckTypeDict, self).__setitem__(key, value)
         if not isinstance(value, self._expected_type):
             raise TypeError('{} = {!r}, should be {}!'.format(
                             key, value, self._expected_type)
@@ -138,14 +138,14 @@ class _CaseInsensitiveEnumMeta(_CheckTypeEnumMeta):
 class CaseInsensitiveStrEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     def __new__(cls, *args):
         args = tuple(arg.upper() for arg in args if isinstance(arg, str))
-        return super().__new__(cls, *args)
+        return super(CaseInsensitiveStrEnum, cls).__new__(cls, *args)
 
     def __eq__(self, other):
         return self.upper() == other.upper()
 
 
 @total_ordering
-class OrderableMixin:
+class OrderableMixin(object):
     """Mixin for comparable Enums. The order is the definition order
     from smaller to bigger.
     """
@@ -154,7 +154,7 @@ class OrderableMixin:
     # the implementation of __hash__() from a parent class,
     # the interpreter must be told this explicitly
     def __hash__(self):
-        return super().__hash__()
+        return super(OrderableMixin, self).__hash__()
 
     def __reduce_ex__(self, proto):
         # this will never run anyway, but the Enum class needs it
