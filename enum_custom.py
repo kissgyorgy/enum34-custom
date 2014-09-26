@@ -37,12 +37,12 @@ class _CasInsensitiveMultiValueMeta(EnumMeta):
     def __init__(self, clsname, bases, classdict):
         # make sure we only have tuple values, not single values
         for member in self.__members__.values():
-            value = member._value_
-            if not isinstance(value, Iterable) or isinstance(value, string_types):
+            values = member._value_
+            if not isinstance(values, Iterable) or isinstance(values, string_types):
                 raise TypeError('{} = {!r}, should be iterable, not {}!'
-                    .format(member._name_, value, type(value))
+                    .format(member._name_, values, type(values))
                 )
-            for alias in value:
+            for alias in values:
                 if isinstance(alias, text_type):
                     alias = alias.upper()
                 self._value2member_map_.setdefault(alias, member)
