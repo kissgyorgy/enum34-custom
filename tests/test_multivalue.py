@@ -14,6 +14,8 @@ class MyMultiValueEnum(MultiValueEnum):
 
 
 class MyOrderableMultiValueEnum(OrderableMixin, MultiValueEnum):
+    if six.PY2:
+        __order__ = 'one two three'
     one = 1, 'one', 'One'
     two = 2, 'two'
     three = 3, 'three'
@@ -234,6 +236,8 @@ class TestOverlappingBehavior:
 
     def test_overlapping_generator(self):
         class MyOverLappingGenMVE(MultiValueEnum):
+            if six.PY2:
+                __order__ = 'A B'
             A = range(5)
             B = (n for n in (4, 5, 6, 7, 8))
 

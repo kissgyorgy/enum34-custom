@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from six import PY2
 from enum_custom import CaseInsensitiveMultiValueEnum, OrderableMixin
 
 
@@ -11,6 +12,10 @@ class MyInsensitiveMVE(CaseInsensitiveMultiValueEnum):
 
 
 class OrderableInsensitiveMVE(OrderableMixin, CaseInsensitiveMultiValueEnum):
+    # In Python 2 classes don't have definition order,
+    # you have to specify it manually
+    if PY2:
+        __order__ = 'one two three'
     one = 'e', 'f'
     two = 'c', 'd'
     three = 'a', 'b'

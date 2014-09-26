@@ -9,7 +9,7 @@ from six import with_metaclass, string_types, text_type
 
 __version__ = '0.6.5'
 __all__ = ['MultiValueEnum', 'no_overlap', 'StrEnum', 'CaseInsensitiveStrEnum',
-           'CaseInsensitiveMultiValueEnum']
+           'CaseInsensitiveMultiValueEnum', 'OrderableMixin']
 
 
 class _MultiValueMeta(EnumMeta):
