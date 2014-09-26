@@ -103,25 +103,6 @@ class _CheckTypeDict(_EnumDict):
             )
 
 
-class _CheckTypeEnumMeta(EnumMeta):
-    @classmethod
-    def __prepare__(metacls, cls, bases):
-        if bases[-1] == Enum:
-            # basic stdlib Enum
-            return _EnumDict()
-        else:
-            # User subclassed one of our custom Enum,
-            # so the last in the mro will be that class
-            # __mro__ of our custom Enum class:
-            # 1. subclass (e.g. StrEnum or IntEnum)
-            # 2. expected type (e.g. str)
-            # 3. Enum class
-            # 4. object
-            our_enum_class = bases[-1]
-            expected_type = our_enum_class.__mro__[1]
-            return _CheckTypeDict(expected_type)
-
-
 class StrEnum(six.text_type, Enum):
     """Enum subclass which members are also instances of str
     and directly comparable to strings. str type is forced at declaration.
@@ -133,7 +114,7 @@ class StrEnum(six.text_type, Enum):
         return super(StrEnum, cls).__new__(cls, *args)
 
 
-class _CaseInsensitiveEnumMeta(_CheckTypeEnumMeta):
+class _CaseInsensitiveEnumMeta(EnumMeta):
     def __init__(self, cls, bases, classdict):
         for name, member in self._member_map_.items():
             self._value2member_map_.pop(member._value_)
