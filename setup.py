@@ -13,7 +13,7 @@ else:
 
 setup(
     name = 'enum34-custom',
-    version = '0.7.0',
+    version = '0.7.1',
     description = 'Custom Enum classes for enum in Python 3.4 '
                   'or for enum34 for Python2.7',
     long_description = open('README.rst').read(),
@@ -32,7 +32,7 @@ setup(
     author_email = 'kissgyorgy@me.com',
     url = 'https://github.com/Walkman/enum34-custom',
     license = 'MIT',
-    py_modules = ['enum34_custom'],
+    py_modules = ['enum_custom'],
     install_requires = install_requires,
     tests_require = ['pytest', 'pytest-raisesregexp'],
 )
