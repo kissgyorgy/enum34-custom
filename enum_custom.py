@@ -1,6 +1,7 @@
 from enum import Enum, EnumMeta, _EnumDict
 from functools import total_ordering
 from collections import Iterable
+from six import with_metaclass
 
 
 __version__ = '0.6.5'
@@ -23,7 +24,7 @@ class _MultiValueMeta(EnumMeta):
                 self._value2member_map_.setdefault(alias, member)
 
 
-class MultiValueEnum(Enum, metaclass=_MultiValueMeta):
+class MultiValueEnum(with_metaclass(_MultiValueMeta, Enum)):
     """Enum subclass where a member can be any iterable (except str).
     You can reference a member by any of its element in the associated iterable.
     """
@@ -51,7 +52,7 @@ class _CasInsensitiveMultiValueMeta(EnumMeta):
 
 
 class CaseInsensitiveMultiValueEnum(
-    Enum, metaclass=_CasInsensitiveMultiValueMeta):
+    with_metaclass(_CasInsensitiveMultiValueMeta, Enum)):
     """Same as MultiValueEnum, except when member value contains an str,
     they will be compared in a case-insensitive manner. Non-str types left
     untouched.
@@ -116,7 +117,7 @@ class _CheckTypeEnumMeta(EnumMeta):
             return _CheckTypeDict(expected_type)
 
 
-class StrEnum(str, Enum, metaclass=_CheckTypeEnumMeta):
+class StrEnum(with_metaclass(_CheckTypeEnumMeta, str, Enum)):
     """Enum subclass which members are also instances of str
     and directly comparable to strings. str type is forced at declaration.
     """
@@ -134,7 +135,7 @@ class _CaseInsensitiveEnumMeta(_CheckTypeEnumMeta):
         return cls.__new__(cls, value.upper())
 
 
-class CaseInsensitiveStrEnum(str, Enum, metaclass=_CaseInsensitiveEnumMeta):
+class CaseInsensitiveStrEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     def __new__(cls, *args):
         args = tuple(arg.upper() for arg in args if isinstance(arg, str))
         return super().__new__(cls, *args)
