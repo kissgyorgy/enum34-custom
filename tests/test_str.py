@@ -1,5 +1,5 @@
 from pytest import raises
-from enum34_custom import StrEnum
+from enum_custom import StrEnum
 
 
 class MyStrEnum(StrEnum):

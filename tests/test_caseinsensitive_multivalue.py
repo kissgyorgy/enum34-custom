@@ -1,4 +1,4 @@
-from enum34_custom import CaseInsensitiveMultiValueEnum, OrderableMixin
+from enum_custom import CaseInsensitiveMultiValueEnum, OrderableMixin
 
 
 class MyInsensitiveMVE(CaseInsensitiveMultiValueEnum):

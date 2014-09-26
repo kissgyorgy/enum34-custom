@@ -1,4 +1,4 @@
-from enum34_custom import CaseInsensitiveStrEnum
+from enum_custom import CaseInsensitiveStrEnum
 from pytest import raises
 
 

@@ -1,6 +1,6 @@
 import pickle
 from pytest import raises, raises_regexp
-from enum34_custom import MultiValueEnum, OrderableMixin, no_overlap
+from enum_custom import MultiValueEnum, OrderableMixin, no_overlap
 
 
 class MyMultiValueEnum(MultiValueEnum):
