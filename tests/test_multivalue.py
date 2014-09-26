@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import pickle
 import six
+from six.moves import range
 from pytest import raises, raises_regexp
 from enum_custom import MultiValueEnum, OrderableMixin, no_overlap
 
@@ -148,7 +149,9 @@ class TestAcceptAnyIterable:
         assert MyGenMVE(4) == MyGenMVE.A
         assert MyGenMVE(5) == MyGenMVE.B
         assert MyGenMVE('a') == MyGenMVE.C
-        assert MyGenMVE.A.value == range(5)
+        if six.PY3:
+            # this is not true in Python2, because xrange(5) != xrange(5)
+            assert MyGenMVE.A.value == range(5)
 
     def test_generators_are_immediatly_exhausted(self):
         class MyExhGenMVE(MultiValueEnum):
@@ -204,7 +207,10 @@ class TestReprShowsTypeDefinedInDeclaration:
             B = (n for n in (5, 6, 7, 8, 9))
             C = (s for s in 'abcde')
 
-        assert repr(MyGenMVE.A) == '<MyGenMVE.A: range(0, 5)>'
+        if six.PY2:
+            assert repr(MyGenMVE.A) == '<MyGenMVE.A: xrange(5)>'
+        else:
+            assert repr(MyGenMVE.A) == '<MyGenMVE.A: range(0, 5)>'
         assert '<generator object <genexpr> at' in repr(MyGenMVE.B)
         assert '<generator object <genexpr> at' in repr(MyGenMVE.C)
 
