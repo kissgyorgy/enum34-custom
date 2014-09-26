@@ -1,7 +1,10 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 from enum import Enum, EnumMeta, _EnumDict
 from functools import total_ordering
 from collections import Iterable
-from six import with_metaclass
+from six import with_metaclass, string_types, text_type
 
 
 __version__ = '0.6.5'
@@ -14,7 +17,7 @@ class _MultiValueMeta(EnumMeta):
         for member in self.__members__.values():
             values = member._value_
             # make sure we only have tuple values, not single values
-            if not isinstance(values, Iterable) or isinstance(values, str):
+            if not isinstance(values, Iterable) or isinstance(values, string_types):
                 raise TypeError('{} = {!r}, should be iterable, not {}!'
                     .format(member._name_, values, type(values))
                 )
@@ -35,18 +38,18 @@ class _CasInsensitiveMultiValueMeta(EnumMeta):
         # make sure we only have tuple values, not single values
         for member in self.__members__.values():
             value = member._value_
-            if not isinstance(value, Iterable) or isinstance(value, str):
+            if not isinstance(value, Iterable) or isinstance(value, string_types):
                 raise TypeError('{} = {!r}, should be iterable, not {}!'
                     .format(member._name_, value, type(value))
                 )
             for alias in value:
-                if isinstance(alias, str):
+                if isinstance(alias, string_types):
                     alias = alias.upper()
                 self._value2member_map_.setdefault(alias, member)
 
     def __call__(cls, value):
         """Return the appropriate instance with any of the values listed."""
-        if isinstance(value, str):
+        if isinstance(value, string_types):
             value = value.upper()
         return super(_CasInsensitiveMultiValueMeta, cls).__call__(value)
 
@@ -117,7 +120,7 @@ class _CheckTypeEnumMeta(EnumMeta):
             return _CheckTypeDict(expected_type)
 
 
-class StrEnum(with_metaclass(_CheckTypeEnumMeta, str, Enum)):
+class StrEnum(with_metaclass(_CheckTypeEnumMeta, text_type, Enum)):
     """Enum subclass which members are also instances of str
     and directly comparable to strings. str type is forced at declaration.
     """
@@ -135,9 +138,9 @@ class _CaseInsensitiveEnumMeta(_CheckTypeEnumMeta):
         return cls.__new__(cls, value.upper())
 
 
-class CaseInsensitiveStrEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CaseInsensitiveStrEnum(with_metaclass(_CaseInsensitiveEnumMeta, text_type, Enum)):
     def __new__(cls, *args):
-        args = tuple(arg.upper() for arg in args if isinstance(arg, str))
+        args = tuple(arg.upper() for arg in args if isinstance(arg, string_types))
         return super(CaseInsensitiveStrEnum, cls).__new__(cls, *args)
 
     def __eq__(self, other):

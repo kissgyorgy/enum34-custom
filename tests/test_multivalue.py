@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 import pickle
 from pytest import raises, raises_regexp
 from enum_custom import MultiValueEnum, OrderableMixin, no_overlap
