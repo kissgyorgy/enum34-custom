@@ -51,7 +51,7 @@ class _CasInsensitiveMultiValueMeta(EnumMeta):
 
     def __call__(cls, value):
         """Return the appropriate instance with any of the values listed."""
-        if isinstance(value, six.string_types):
+        if isinstance(value, six.text_type):
             value = value.upper()
         return super(_CasInsensitiveMultiValueMeta, cls).__call__(value)
 
