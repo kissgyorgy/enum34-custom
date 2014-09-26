@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from six import text_type
+import six
 from pytest import raises
 from enum_custom import CaseInsensitiveStrEnum
 
@@ -12,7 +12,7 @@ class MyCaseInsensitiveStrEnum(CaseInsensitiveStrEnum):
 
 
 def test_members_are_instances_of_text_type():
-    assert isinstance(MyCaseInsensitiveStrEnum.one, text_type)
+    assert isinstance(MyCaseInsensitiveStrEnum.one, six.text_type)
 
 
 def test_members_are_also_instances_of_StrEnum():

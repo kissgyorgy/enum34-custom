@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from six import text_type
+import six
 from pytest import raises
 from enum_custom import StrEnum
 
@@ -27,7 +27,7 @@ class MyReverseOrderedStrEnum(StrEnum):
 
 
 def test_members_are_instances_text_type():
-    assert isinstance(MyStrEnum.one, text_type)
+    assert isinstance(MyStrEnum.one, six.text_type)
 
 
 def test_members_are_also_instances_of_StrEnum():

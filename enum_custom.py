@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from enum import Enum, EnumMeta, _EnumDict
 from functools import total_ordering
 from collections import Iterable
-from six import with_metaclass, string_types, text_type
+import six
 
 
 __version__ = '0.6.5'
@@ -17,7 +17,8 @@ class _MultiValueMeta(EnumMeta):
         for member in self.__members__.values():
             values = member._value_
             # make sure we only have tuple values, not single values
-            if not isinstance(values, Iterable) or isinstance(values, string_types):
+            if (not isinstance(values, Iterable) or
+                    isinstance(values, six.string_types)):
                 raise TypeError('{} = {!r}, should be iterable, not {}!'
                     .format(member._name_, values, type(values))
                 )
@@ -27,7 +28,7 @@ class _MultiValueMeta(EnumMeta):
                 self._value2member_map_.setdefault(alias, member)
 
 
-class MultiValueEnum(with_metaclass(_MultiValueMeta, Enum)):
+class MultiValueEnum(six.with_metaclass(_MultiValueMeta, Enum)):
     """Enum subclass where a member can be any iterable (except str).
     You can reference a member by any of its element in the associated iterable.
     """
@@ -38,24 +39,25 @@ class _CasInsensitiveMultiValueMeta(EnumMeta):
         # make sure we only have tuple values, not single values
         for member in self.__members__.values():
             values = member._value_
-            if not isinstance(values, Iterable) or isinstance(values, string_types):
+            if (not isinstance(values, Iterable) or
+                    isinstance(values, six.string_types)):
                 raise TypeError('{} = {!r}, should be iterable, not {}!'
                     .format(member._name_, values, type(values))
                 )
             for alias in values:
-                if isinstance(alias, text_type):
+                if isinstance(alias, six.text_type):
                     alias = alias.upper()
                 self._value2member_map_.setdefault(alias, member)
 
     def __call__(cls, value):
         """Return the appropriate instance with any of the values listed."""
-        if isinstance(value, string_types):
+        if isinstance(value, six.string_types):
             value = value.upper()
         return super(_CasInsensitiveMultiValueMeta, cls).__call__(value)
 
 
 class CaseInsensitiveMultiValueEnum(
-    with_metaclass(_CasInsensitiveMultiValueMeta, Enum)):
+    six.with_metaclass(_CasInsensitiveMultiValueMeta, Enum)):
     """Same as MultiValueEnum, except when member value contains an str,
     they will be compared in a case-insensitive manner. Non-str types left
     untouched.
@@ -120,13 +122,13 @@ class _CheckTypeEnumMeta(EnumMeta):
             return _CheckTypeDict(expected_type)
 
 
-class StrEnum(text_type, Enum):
+class StrEnum(six.text_type, Enum):
     """Enum subclass which members are also instances of str
     and directly comparable to strings. str type is forced at declaration.
     """
     def __new__(cls, *args):
         for arg in args:
-            if not isinstance(arg, text_type):
+            if not isinstance(arg, six.text_type):
                 raise TypeError('Not text %s:' % arg)
         return super(StrEnum, cls).__new__(cls, *args)
 
@@ -144,11 +146,11 @@ class _CaseInsensitiveEnumMeta(_CheckTypeEnumMeta):
 
 
 class CaseInsensitiveStrEnum(
-        with_metaclass(_CaseInsensitiveEnumMeta, text_type, Enum)):
+        six.with_metaclass(_CaseInsensitiveEnumMeta, six.text_type, Enum)):
     def __new__(cls, *args):
         checkargs = []
         for arg in args:
-            if isinstance(arg, text_type):
+            if isinstance(arg, six.text_type):
                 checkargs.append(arg.upper())
             else:
                 raise TypeError('Not text %s:' % arg)
