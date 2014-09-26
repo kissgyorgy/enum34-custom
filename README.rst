@@ -220,6 +220,8 @@ things that doesn't work very well on 2, which you should be aware:
   insensitive!)
 - Python 2 leaks variables from list comprehensions, so if you define your class
   like this:
+- On pypy you always have to set __order__ because if you use different types, because
+  it would sort the member values, but can't compare set to other type.
 
   .. code-block:: python
 

@@ -328,6 +328,8 @@ def test_idempotency():
 
 def test_lookup_by_original_value():
     class MyOriginalMVE(MultiValueEnum):
+        if six.PY2:
+            __order__ = 'one two'
         one = 1, 2
         two = {3, 4}
 
