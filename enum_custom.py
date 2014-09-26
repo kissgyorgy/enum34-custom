@@ -43,7 +43,7 @@ class _CasInsensitiveMultiValueMeta(EnumMeta):
                     .format(member._name_, value, type(value))
                 )
             for alias in value:
-                if isinstance(alias, string_types):
+                if isinstance(alias, text_type):
                     alias = alias.upper()
                 self._value2member_map_.setdefault(alias, member)
 
@@ -120,10 +120,15 @@ class _CheckTypeEnumMeta(EnumMeta):
             return _CheckTypeDict(expected_type)
 
 
-class StrEnum(with_metaclass(_CheckTypeEnumMeta, text_type, Enum)):
+class StrEnum(text_type, Enum):
     """Enum subclass which members are also instances of str
     and directly comparable to strings. str type is forced at declaration.
     """
+    def __new__(cls, *args):
+        for arg in args:
+            if not isinstance(arg, text_type):
+                raise TypeError('Not text %s:' % arg)
+        return super(StrEnum, cls).__new__(cls, *args)
 
 
 class _CaseInsensitiveEnumMeta(_CheckTypeEnumMeta):
@@ -138,10 +143,16 @@ class _CaseInsensitiveEnumMeta(_CheckTypeEnumMeta):
         return cls.__new__(cls, value.upper())
 
 
-class CaseInsensitiveStrEnum(with_metaclass(_CaseInsensitiveEnumMeta, text_type, Enum)):
+class CaseInsensitiveStrEnum(
+        with_metaclass(_CaseInsensitiveEnumMeta, text_type, Enum)):
     def __new__(cls, *args):
-        args = tuple(arg.upper() for arg in args if isinstance(arg, string_types))
-        return super(CaseInsensitiveStrEnum, cls).__new__(cls, *args)
+        checkargs = []
+        for arg in args:
+            if isinstance(arg, text_type):
+                checkargs.append(arg.upper())
+            else:
+                raise TypeError('Not text %s:' % arg)
+        return super(CaseInsensitiveStrEnum, cls).__new__(cls, *checkargs)
 
     def __eq__(self, other):
         return self.upper() == other.upper()
