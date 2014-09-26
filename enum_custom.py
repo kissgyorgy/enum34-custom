@@ -7,7 +7,7 @@ from collections import Iterable
 import six
 
 
-__version__ = '0.6.5'
+__version__ = '0.7.0'
 __all__ = ['MultiValueEnum', 'no_overlap', 'StrEnum', 'CaseInsensitiveStrEnum',
            'CaseInsensitiveMultiValueEnum', 'OrderableMixin']
 
