@@ -30,7 +30,7 @@ It might be usable for e.g. Equivalence Class Partitioning (ECP/EC testing).
 
 .. code-block:: python
 
-   from enum34_custom import MultiValueEnum
+   from enum_custom import MultiValueEnum
 
    class Suit(MultiValueEnum):
        CLUBS =    '♣', 'c', 'C'
@@ -95,7 +95,7 @@ It might be usable for e.g. Equivalence Class Partitioning (ECP/EC testing).
 
   .. code-block:: python
 
-     >>> from enum34_custom import MultiValueEnum, no_overlap
+     >>> from enum_custom import MultiValueEnum, no_overlap
 
      >>> @no_overlap
      ... class NoOverLappingEnum(MultiValueEnum):
@@ -176,7 +176,7 @@ case insensitive also:
 
 .. code-block:: python
 
-   from enum34_custom import CaseInsensitiveStrEnum
+   from enum_custom import CaseInsensitiveStrEnum
    class MyCaseInsensitiveStrEnum(CaseInsensitiveStrEnum):
        one = 'a'
        two = 'b'
