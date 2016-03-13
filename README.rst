@@ -244,24 +244,24 @@ v0.7.0
 
 .. _enum34 package dokumentation: https://pypi.python.org/pypi/enum34
 
-.. |travis| image:: https://travis-ci.org/Walkman/enum34-custom.svg?branch=master
-   :target: https://travis-ci.org/Walkman/enum34-custom
+.. |travis| image:: https://travis-ci.org/kissgyorgy/enum34-custom.svg?branch=master
+   :target: https://travis-ci.org/kissgyorgy/enum34-custom
 
-.. |coveralls| image:: https://coveralls.io/repos/Walkman/enum34-custom/badge.png?branch=master
-   :target: https://coveralls.io/r/Walkman/enum34-custom?branch=master
+.. |coveralls| image:: https://coveralls.io/repos/kissgyorgy/enum34-custom/badge.png?branch=master
+   :target: https://coveralls.io/r/kissgyorgy/enum34-custom?branch=master
 
-.. |pythons| image:: https://pypip.in/py_versions/enum34-custom/badge.svg
+.. |pythons| image:: https://img.shields.io/pypi/pyversions/enum34-custom.svg
    :target: https://pypi.python.org/pypi/enum34-custom/
    :alt: Supported Python versions
 
-.. |release| image:: https://pypip.in/version/enum34-custom/badge.svg
+.. |release| image:: https://img.shields.io/pypi/v/enum34-custom.svg
    :target: https://pypi.python.org/pypi/enum34-custom/
    :alt: Latest Version
 
-.. |license| image:: https://pypip.in/license/enum34-custom/badge.svg
-   :target: https://github.com/Walkman/enum34-custom/blob/master/LICENSE
+.. |license| image:: https://img.shields.io/badge/license-MIT-blue.svg
+   :target: https://github.com/kissgyorgy/enum34-custom/blob/master/LICENSE
    :alt: MIT License
 
-.. |downloads| image:: https://pypip.in/download/enum34-custom/badge.svg
+.. |downloads| image:: https://img.shields.io/pypi/dm/enum34-custom.svg
    :target: https://pypi.python.org/pypi/enum34-custom/
    :alt: Downloads
