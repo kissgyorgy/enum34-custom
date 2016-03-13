@@ -247,8 +247,8 @@ v0.7.0
 .. |travis| image:: https://travis-ci.org/kissgyorgy/enum34-custom.svg?branch=master
    :target: https://travis-ci.org/kissgyorgy/enum34-custom
 
-.. |coveralls| image:: https://coveralls.io/repos/kissgyorgy/enum34-custom/badge.png?branch=master
-   :target: https://coveralls.io/r/kissgyorgy/enum34-custom?branch=master
+.. |coveralls| image:: https://coveralls.io/repos/github/kissgyorgy/enum34-custom/badge.svg?branch=master
+   :target: https://coveralls.io/github/kissgyorgy/enum34-custom?branch=master
 
 .. |pythons| image:: https://img.shields.io/pypi/pyversions/enum34-custom.svg
    :target: https://pypi.python.org/pypi/enum34-custom/
