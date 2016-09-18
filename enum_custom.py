@@ -20,8 +20,7 @@ class _MultiValueMeta(EnumMeta):
             if (not isinstance(values, Iterable) or
                     isinstance(values, six.string_types)):
                 raise TypeError('{} = {!r}, should be iterable, not {}!'
-                    .format(member._name_, values, type(values))
-                )
+                                .format(member._name_, values, type(values)))
             for alias in values:
                 # don't touch if already set, so behave like alias
                 # described in python documentation
@@ -42,8 +41,7 @@ class _CasInsensitiveMultiValueMeta(EnumMeta):
             if (not isinstance(values, Iterable) or
                     isinstance(values, six.string_types)):
                 raise TypeError('{} = {!r}, should be iterable, not {}!'
-                    .format(member._name_, values, type(values))
-                )
+                                .format(member._name_, values, type(values)))
             for alias in values:
                 if isinstance(alias, six.text_type):
                     alias = alias.upper()
@@ -57,7 +55,7 @@ class _CasInsensitiveMultiValueMeta(EnumMeta):
 
 
 class CaseInsensitiveMultiValueEnum(
-    six.with_metaclass(_CasInsensitiveMultiValueMeta, Enum)):
+        six.with_metaclass(_CasInsensitiveMultiValueMeta, Enum)):
     """Same as MultiValueEnum, except when member value contains an str,
     they will be compared in a case-insensitive manner. Non-str types left
     untouched.
@@ -76,15 +74,12 @@ def no_overlap(multienum):
         for prev_member in members:
             intersection = set(member._value_) & set(prev_member._value_)
             if intersection:
-                duplicates.append(
-                    (member._name_, prev_member._name_, intersection)
-                )
+                duplicates.append((member._name_, prev_member._name_, intersection))
         members.append(member)
 
     if duplicates:
-        alias_details = ', '.join(["{} & {} -> {}"
-                                  .format(alias, name, intersection) for
-                                  (alias, name, intersection) in duplicates])
+        alias_details = ', '.join(["{} & {} -> {}".format(alias, name, intersection)
+                                  for (alias, name, intersection) in duplicates])
         raise ValueError('common element found in {!r}: {}'
                          .format(multienum, alias_details))
     return multienum
@@ -99,8 +94,7 @@ class _CheckTypeDict(_EnumDict):
         super(_CheckTypeDict, self).__setitem__(key, value)
         if not isinstance(value, self._expected_type):
             raise TypeError('{} = {!r}, should be {}!'.format(
-                            key, value, self._expected_type)
-            )
+                            key, value, self._expected_type))
 
 
 class StrEnum(six.text_type, Enum):

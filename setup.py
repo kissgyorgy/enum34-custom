@@ -12,12 +12,12 @@ else:
 
 
 setup(
-    name = 'enum34-custom',
-    version = '0.7.2',
-    description = 'Custom Enum classes for enum in Python 3.4 '
-                  'or for enum34 for Python2.7',
-    long_description = open('README.rst').read(),
-    classifiers = [
+    name='enum34-custom',
+    version='0.7.2',
+    description='Custom Enum classes for enum in Python 3.4 '
+                'or for enum34 for Python2.7',
+    long_description=open('README.rst').read(),
+    classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'Programming Language :: Python',
@@ -27,12 +27,12 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
     ],
-    keywords = ['enum'],
-    author = 'Kiss György',
-    author_email = 'kissgyorgy@me.com',
-    url = 'https://github.com/Walkman/enum34-custom',
-    license = 'MIT',
-    py_modules = ['enum_custom'],
-    install_requires = install_requires,
-    tests_require = ['pytest', 'pytest-raisesregexp'],
+    keywords=['enum'],
+    author=u'Kiss György',
+    author_email='kissgyorgy@me.com',
+    url='https://github.com/Walkman/enum34-custom',
+    license='MIT',
+    py_modules=['enum_custom'],
+    install_requires=install_requires,
+    tests_require=['pytest', 'pytest-raisesregexp'],
 )
