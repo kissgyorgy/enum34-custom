@@ -57,7 +57,7 @@ It might be usable for e.g. Equivalence Class Partitioning (ECP/EC testing).
    >>> Suit('L')
    Traceback (most recent call last):
      File "<stdin>", line 1, in <module>
-     File "/Users/walkman/Projects/enum34-custom/enum34_custom.py", line 19, in __call__
+     File "/Users/walkman/Projects/enum34-custom/enum_custom.py", line 19, in __call__
        return super().__call__(suit)
      File "/usr/local/Cellar/python3/3.4.1/Frameworks/Python.framework/Versions/3.4/lib/python3.4/enum.py", line 222, in __call__
        return cls.__new__(cls, value)
@@ -102,7 +102,7 @@ It might be usable for e.g. Equivalence Class Partitioning (ECP/EC testing).
      ...     A = (1, 2, 3)
      ...     B = (3, 4, 5)
      ...
-     /Users/walkman/Projects/enum34-custom/enum34_custom.py in no_overlap(multienum)
+     /Users/walkman/Projects/enum34-custom/enum_custom.py in no_overlap(multienum)
           55                                   (alias, name, intersection) in duplicates])
           56         raise ValueError('common element found in {!r}: {}'
      ---> 57                          .format(multienum, alias_details))
