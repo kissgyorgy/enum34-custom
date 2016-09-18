@@ -13,7 +13,7 @@ else:
 
 setup(
     name = 'enum34-custom',
-    version = '0.7.1',
+    version = '0.7.2',
     description = 'Custom Enum classes for enum in Python 3.4 '
                   'or for enum34 for Python2.7',
     long_description = open('README.rst').read(),
