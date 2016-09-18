@@ -1,14 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from setuptools import setup, find_packages
-from setuptools.command.test import test as TestCommand
-import six
-
-
-if six.PY2:
-    install_requires = ['six', 'enum34']
-else:
-    install_requires = ['six']
+import sys
+from setuptools import setup
 
 
 setup(
@@ -18,7 +11,6 @@ setup(
                 'or for enum34 for Python2.7',
     long_description=open('README.rst').read(),
     classifiers=[
-        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'Programming Language :: Python',
         'License :: OSI Approved :: MIT License',
@@ -30,9 +22,9 @@ setup(
     keywords=['enum'],
     author=u'Kiss György',
     author_email='kissgyorgy@me.com',
-    url='https://github.com/Walkman/enum34-custom',
+    url='https://github.com/kissgyorgy/enum34-custom',
     license='MIT',
     py_modules=['enum_custom'],
-    install_requires=install_requires,
+    install_requires=['enum34', 'six'] if sys.version_info[0] < 3 else ['enum34'],
     tests_require=['pytest', 'pytest-raisesregexp'],
 )
